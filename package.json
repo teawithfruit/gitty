@@ -1,0 +1,20 @@
+{
+  "name": "gitty",
+  "version": "0.0.1",
+  "description": "A Node.js wrapper for the Git CLI",
+  "main": "index",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gordonwritescode/gitty.git"
+  },
+  "keywords": [
+    "git",
+	"git cli",
+	"node git"
+  ],
+  "author": "Gordon Hall <gordon@gordonwritescode.com> (http://gordonwritescode.com/)",
+  "license": "BSD"
+}
