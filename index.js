@@ -24,6 +24,8 @@ module.exports = (function() {
 	var fs = require('fs'),
 	    exec = require('child_process').exec,
 	    back = __dirname;
+
+  fs.existsSync || (fs.existsSync = path.existsSync);
 	
 	/*
 	 * repository() - private
