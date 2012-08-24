@@ -22,6 +22,7 @@
 module.exports = (function() {
 	// get required modules
 	var fs = require('fs'),
+      path = require('path'),
 	    exec = require('child_process').exec,
 	    back = __dirname;
 
