@@ -12,8 +12,8 @@
   },
   "keywords": [
     "git",
-	"git cli",
-	"node git"
+    "git cli",
+    "node git"
   ],
   "author": "Gordon Hall <gordon@gordonwritescode.com> (http://gordonwritescode.com/)",
   "license": "BSD"
