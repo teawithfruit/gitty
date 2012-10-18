@@ -6,12 +6,23 @@ Gitty is a Node.js wrapper for the Git CLI. It's syntax closely resembles the Gi
 
 * Node.js 0.8.x (http://nodejs.org)
 * Git 1.7.x.x (http://git-scm.com)
+* Mac OSX or Linux-based System
 
 ## Installation
 
 ```
 $ npm install gitty
 ```
+
+**Note**: If you encounter an error during installation on Mac OSX, make sure you have the XCode Command Line Tools installed. Gitty depends on **pty.js** for authenticated operations - which requires GCC compiler.
+
+1. Go to the App store and download the latest version of Xcode for free.
+2. Install Xcode (the app store actually downloads the "installer" for Xcode)
+3. Start Xcode
+4. Go to Preferences
+5. Go to Downloads
+6. Click on the "install" button after "Command Line Tools"
+7. Reboot
 
 ## Usage
 
