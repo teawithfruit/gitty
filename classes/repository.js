@@ -9,6 +9,7 @@ var fs = require('fs')
   , path = require('path')
   , Command = require('./command.js')
   , parse = require('../modules/output-parser.js')
+  , pty = require('pty.js')
   , Repository;
 
 ////
@@ -202,7 +203,7 @@ Repository.prototype.remote = {};
 // Repository.remote.add(remote, url, callback)
 // Adds a new remote
 ////
-Repository.protoype.remote.add = function(remote, url, callback) {
+Repository.prototype.remote.add = function(remote, url, callback) {
 	var options = remote + ' ' + url
 	  , gitRemoteAdd = new Command(this.path, 'remote add', [], options)
 	  , repo = this;
@@ -216,7 +217,7 @@ Repository.protoype.remote.add = function(remote, url, callback) {
 // Repository.remote.setUrl(remote, url, callback)
 // Changes url of an existing remote
 ////
-Repository.protoype.remote.setUrl = function(remote, url, callback) {
+Repository.prototype.remote.setUrl = function(remote, url, callback) {
 	var options = remote + ' ' + url
 	  , gitRemoteSetUrl = new Command(this.path, 'remote set-url', [], options)
 	  , repo = this;
@@ -253,6 +254,68 @@ Repository.prototype.remote.list = function(callback) {
 			output = parse['remotes'](output);
 		}
 		callback.call(repo, err, output);
+	});
+};
+
+////
+// Repository.push(remote, branch, callback, creds)
+// Pushes the specified branch to the specified remote
+////
+Repository.prototype.push = function(remote, branch, callback, creds) {
+	sync('push', remote, branch, callback, creds);
+};
+
+////
+// Repository.pull(remote, branch, callback, creds)
+// Pulls the specified branch from the specified remote
+////
+Repository.prototype.pull = function(remote, branch, callback, creds) {
+	sync('pull', remote, branch, callback, creds);
+};
+
+////
+// sync(operation, remote, branch, callback, creds)
+// ----
+// Creates a fake terminal to push or pull from remote
+// This is because SSH does not read creds from stdin, 
+// but instead, a pseudo-terminal.
+////
+function sync(operation, remote, branch, callback, creds) {
+	var pterm = pty.spawn('git', [operation, remote, branch], { cwd : this.path })
+	  , repo = this
+	  , err
+	  , succ;
+	pterm.on('data', function(data) {
+		var prompt = data.toLowerCase();
+		if (prompt.indexOf('username') > -1) {
+			pterm.write(creds.user + '\r');
+		} else if (prompt.indexOf('password') > -1) {
+			pterm.write(creds.pass + '\r');
+		} else if ((prompt.indexOf('error') > -1) || (prompt.indexOf('fatal') > -1)) {
+			err = parse['syncErr'](prompt);
+		} else {
+			succ = parse['syncSuccess'](prompt);
+		}
+	});
+	pterm.on('end', function() {
+		callback.call(repo, err, succ);
+	});
+};
+
+////
+// Repository.reset(hash, callback)
+// Resets the repository's HEAD to the specified commit and passes commit log to callback
+////
+Repository.prototype.reset = function(hash, callback) {
+	var gitReset = new Command(this.path, 'reset', ['-q'], hash)
+	  , repo = this
+	  , err;
+	gitReset.exec(function(error, stdout, stderr) {
+		err = error || stderr || err;
+		repo.log(function(logErr, log) {
+			err = logErr || err;
+			callback.call(repo, err, log);
+		});
 	});
 };
 

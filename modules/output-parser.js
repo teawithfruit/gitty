@@ -113,4 +113,25 @@ parsers['remotes'] = function(output) {
 	return list;
 };
 
+////
+// git push/pull error
+////
+parsers['syncErr'] = function(output) {
+	var result = output.split('\r\n');
+	for (var i = 0; i < result.length; i++) {
+		if (!result[i].length) {
+			result.splice(i, 1);
+		}
+	}
+	return result;
+};
+
+////
+// git push/pull success
+////
+parsers['syncSuccess'] = function(output) {
+	var result = output;
+	return result;
+};
+
 module.exports = parsers;

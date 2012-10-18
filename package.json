@@ -1,9 +1,11 @@
 {
   "name": "gitty",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
-  "dependencies": {},
+  "dependencies": {
+  	"pty.js" : "0.1.2"
+  },
   "devDependencies": {},
   "scripts": {},
   "repository": {
