@@ -1,6 +1,6 @@
 # Gitty
 
-Gitty is a Node.js module that acts as a wrapper for the Git CLI. It uses methods that resemble the Git command line syntax to asynchronously execute common commands, and return passes the output as standard JavaScript objects and arrays - depending on the call.
+Gitty is a Node.js wrapper for the Git CLI. It's syntax closely resembles the Git command line syntax to asynchronously execute common commands, and parses the output into operable objects - depending on the call.
 
 ## Prerequisites
 
@@ -15,109 +15,419 @@ $ npm install gitty
 
 ## Usage
 
+First, require Gitty.
+
 ```javascript
 var git = require('gitty');
+```
 
-// get commit log as an array of objects
-// and log to the console
-git.history('/path/to/repo', function(output) {
-	console.log(output);
+The "meat" of the functionality is encapsulated in instances of a `Repository` object. This object is instantiated with the path to the repository you wish to perform actions on.
+
+```javascript
+var myRepo = new git.Repository('/path/to/repo');
+```
+
+Now you can call this instance of `Repository`'s methods. For example, to execute `git log` for `myRepo`, you would do:
+
+```javascript
+myRepo.log(function(err, log) {
+	if (err) {
+		// handle error
+	} else {
+		// do something with `log`	
+	}
 });
 ```
 
+A complete list of the available methods is below, as well as other Gitty functions.
+
+## Potential Use Cases
+
+* Writing an exception logger with more insight
+* Building a web based Git client
+* Integrating automated deployments
+
 ## Documentation
 
-Internally, Gitty uses a private method `repository(path)` that checks if the given path is a valid Git repository. If the check passes, then a child process is spawned and the process moves into the given directory to perform the command. After the callback is fired for the given function, Gitty moves the process back to it's original directory.
+### Repository(path)
 
-> To ensure the best performance you should always use absolute or server-relative paths. For example '/users/username/repositories/projectname'.
+Creates an instance of `gitty.Repository` from the given `path`. Each instance contains the following properties and has access to the following methods.
 
-All `path` arguments should follow this convention.
+#### Repository.isRepository
 
-Callbacks for all methods are given a single object. Usually, this object contains a single property and value. **Successful** operations get a `message` property containing either the `stdout` from the command or a message confirming the operation was successfull.
+**Type**: `Boolean`
 
-**Failed** operations get an `error` property, for which the value is either one of: an error from Node, `stderr` from the operation, or a message alert the operation failed - whichever is relevant.
+Based on the existence of the `.git/` directory under the instance `path`.
 
-This is not the case for every method. Refer to the method list below for specifics.
+#### Repository.name
 
-### history(path, [callback])
+**Type**: `String`
 
-Gives an *array* of objects containing `commit`, `author`, `date`, and `message`.
+Directory name of the instantiated `Repository`.
 
-### create(name, description, path, [callback])
+#### Repository.path
 
-Creates a directory at the given path, create a README markdown file with the name and desciption, initializes a git repository, and stages an initial commit.
+**Type**: `String`
 
-### destroy(path, deletefiles, [callback])
+Normalized copy of the instance `path`.
 
-Uninitializes the repository at the given path. The `deletefiles` argument is a boolean that determines whether of not to also delete the contents of the repository.
+#### Repository.init(callback, flags)
 
-### status(path, [callback])
+Initializes the directory as a Git repository.
 
-Gives an object with properties for `staged`, `not_staged`, and `untracked`. Each property represents an array of objects - each containing a `file` and `status`. 
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
 
-### add(path, files, [callback])
+**flags**
+* Type: `Array`
+* Description: Command flags like `['--bare','--shared']`
 
-Adds an array of files for commit, and gives back and object of `errors` (array) and `added` (array).
+#### Repository.log(callback)
 
-### remove(path, files, [callback])
+Passes commit history as array to callback
 
-Removes array of files for commit, and gives back and object of `errors` (array) and `added` (array).
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, log)`
 
-### unstage(path, files, callback)
+#### Repository.status(callback)
 
-Unstages array of files for commit, and gives back and object of `errors` (array) and `added` (array).
+Passes a status object into the callback
 
-### commit(path, message, [callback])
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, status)`
 
-Stages a commit with message based on the current staged files.
+#### Repository.add(files, callback)
 
-### tree(path, [callback])
+Stages the passed array of files for commit
 
-Gives back an object representing the `current` branch and an array of `others`.
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
 
-### branch(path, branchname, [callback])
+#### Repository.remove(files, callback)
 
-Creates a branch using the `branchname` for the repository at the given path
+Removes the passed array of files for commit
 
-### checkout(path, branchname, [callback])
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
 
-Does a checkout on the given `branchname`.
+#### Repository.unstage(files, callback)
 
-### remote.add(path, remote, url, callback)
+Removes passed array of files from staging area
 
-Adds a remote to the given repository.
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
 
-### remote.update(path, remote, url, callback)
+#### Repository.commit(message, callback)
 
-Updates an existing remote's url.
+Commits the current staged files
 
-### remote.remove(path, remote, callback)
+**message**
+* Type: `String`
+* Description: Commit message
 
-Removes the given remote from the repository.
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, output)`
 
-### remote.list(path, [callback])
+#### Repository.branches(callback)
 
-Returns an object where each `key` is the remote name and `val` is the remote url.
+Passes object denoting current branch and array of other branches
 
-### push(path, remote, branch, callback)
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, branches)`
 
-Pushes the passed `branch` to the passed `remote`.
+#### Repository.branch(name, callback)
 
-### pull(path, remote, branch, callback)
+Creates a new branch from the given branch name
 
-Pulls the passed `branch` from the passed `remote`.
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
 
-### reset(path, hash, callback)
+#### Repository.checkout(branch, callback)
 
-Resets the HEAD back to the status of the passed commit hash.
+Performs checkout on given branch
 
-### merge(path, branch, [callback])
+**branch**
+* Type: `String`
+* Description: Name of the branch to checkout
 
-Merges the given `branch` with the current branch.
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, branches)`
 
-### clone(path, url, callback)
+#### Repository.merge(branch, callback)
 
-Clones a remote repository into the specified path.
+Performs a merge of the current branch with the specified one
+
+**branch**
+* Type: `String`
+* Description: Name of the branch to merge into current
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
+#### Repository.remote.add(name, url, callback)
+
+Adds a new remote
+
+**name**
+* Type: `String`
+* Description: Name of the remote to add
+
+**url**
+* Type: `String`
+* Description: URL to set for the new remote
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
+#### Repository.remote.setUrl(name, url, callback)
+
+Changes url of an existing remote
+
+**name**
+* Type: `String`
+* Description: Name of the remote to edit
+
+**url**
+* Type: `String`
+* Description: URL to set for the existing remote
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
+#### Repository.remote.remove(name, callback)
+
+Removes the specified remote
+
+**name**
+* Type: `String`
+* Description: Name of the remote to remove
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
+#### Repository.remote.list(callback)
+
+Passes key-value pairs to callback formatted: `remote : url`
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, remotes)`
+
+#### Repository.push(remote, branch, callback, creds)
+
+Pushes the specified branch to the specified remote
+
+**remote**
+* Type: `String`
+* Description: Name of the remote to push to
+
+**branch**
+* Type: `String`
+* Description: Name of the branch to push
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, success)`
+
+**creds** (optional)
+* Type: `Object`
+* Description: Formatted as `{ user : 'username', pass : 'password' }`
+
+> **Note:** This method does not use an instance of `Command()`, see *Authenticated Repositories*
+
+#### Repository.pull(remote, branch, callback, creds)
+
+Pulls the specified branch from the specified remote
+
+**remote**
+* Type: `String`
+* Description: Name of the remote to pull from
+
+**branch**
+* Type: `String`
+* Description: Name of the branch to pull
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, success)`
+
+**creds** (optional)
+* Type: `Object`
+* Description: Formatted as `{ user : 'username', pass : 'password' }`
+
+> **Note:** This method does not use an instance of `Command()`, see *Authenticated Repositories*
+
+#### Repository.reset(hash, callback)
+
+Resets the repository's HEAD to the specified commit and passes commit log to callback
+
+**hash**
+* Type: `String`
+* Description: Commit hash identifier to rest to
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, log)`
+
+### Command(path, operation, flags, options)
+
+Creates an instance of `gitty.Command` from the given arguments. This is constructor is used primarily internally, for executing `Repository` methods, however, it is exposed - see *Extending Gitty*. Each instance contains the following properties and has access to the following methods.
+
+#### Command.repo
+
+**Type**: `String`
+
+Directory path for the instantiated `Command` object
+
+#### Command.command
+
+**Type**: `String`
+
+Assembled command string based on the instantiated `operation`, `flags`, and `options`
+
+#### Command.exec(callback)
+
+Executes a `child_process` by the instance's `command` property in the directory specified by the instance's `path` property
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, stdout, stderr)`
+
+> **Note:** This is a wrapper for Node's `child_process.exec` that, first, validates the path as a Git repository before execution. If the path fails validation, an `Error` will be thrown.
+
+### config(key, value, callback)
+
+Does global Git configuration
+
+**key**
+* Type: `String`
+* Description: Name of configuration property to set
+
+**value**
+* Type: `String`
+* Description: Value to set to the named configuration property
+
+**callback** (optional)
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
+### clone(path, url, callback, creds)
+
+Clones the repository at `url` into the specified `path`
+
+**path**
+* Type: `String`
+* Description: Path to directory to clone into
+
+**url**
+* Type: `String`
+* Description: Url of the Git repository to clone
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, success)`
+
+**creds** (optional)
+* Type: `Object`
+* Description: Formatted as `{ user : 'username', pass : 'password' }`
+
+> **Note:** This method does not use an instance of `Command()`, see *Authenticated Repositories*
+
+## Authenticated Repositories
+
+One challenge that was faced while developing Gitty was performing any authenticated operations. Since OpenSSH does not read input from `stdin` for authentication, but rather a psuedo-terminal - Gitty uses *pty.js* (<https://github.com/chjj/pty.js/>) to spawn a pseudo-terminal for operations that may require authentication, such as `pull`, `push`, and `clone`.
+
+Credentials are always passed as the last argument and are optional. Below is an example of an authenticated `Repository.push()`.
+
+```javascript
+// do authenticated push to origin
+myRepo.push('origin', 'master', function(err, succ) {
+	if (err) {
+		console.log(err);
+	} else {
+		console.log(succ);
+	}
+}, {
+	user : 'username',
+	pass : 'password'
+});
+```
+
+This format is consistent for all authenticated operations. Keep this in mind if you are extending Gitty with an operation that requires authentication, and be sure to read the pty.js documentation.
+
+## Extending Gitty
+
+Almost all of the `Repository` methods are simply convenience wrappers around instances of `Command`. This makes extending the `Repository` constructor with custom methods easy as pie! Let's run through a quick example. Let's say we want to add a method for creating a new branch and automatically switching to it. What do we need to do?
+
+1. Extend the `Repository` prototype
+2. Create a new instance of `Command`
+3. Parse the output and pass to a callback
+
+Three steps is all it should take to add a new method to the `Repository` constructor, and below is how you might do it.
+
+```javascript
+// require gitty
+var git = require('gitty');
+
+// create new prototype endpoint
+// we want to pass a branch name and callback into this method
+git.Repository.prototype.branchAndCheckout = function(name, callback) {
+
+	// save the scope of the repository
+	var repo = this
+	// create a new instance of Command
+	  , cmd = new git.Command(repo.path, 'checkout', ['-b'], name);
+	  
+	// execute the command and determine the outcome
+	cmd.exec(function(error, stdout, stderr) {
+		var err = error || stderr;
+		
+		// call the callback function in the repository scope
+		// passing it err and stdout
+		callback.call(repo, err, stdout);
+	});
+};
+```
+
+It's a simple as that. Now you would be able to use this custom method in your application, like so:
+
+```javascript
+myRepo.branchAndCheckout('myBranch', function(err, data) {
+	if (err) {
+		// throw error
+	} else {
+		console.log(data);
+	}
+});
+```
+
+## The Output Parser
+
+The output parser is simply a collection of functions that accept the string output of an executed command, and turn it into something that can be operated on. For example, the output from `git log` gets converted to an array of object-literals before being returned back to the callback for `Repository.log()`. 
+
+## Contributing
+
+One of the reasons I have tried to make Gitty so easy to extend is, well, because I want you to extend it! It is not a wrapper for every possible Git operation, but it most certainly could be, and with minimal coding too! Contributions are always welcome and encouraged. However, to keep Gitty clean and healthy, before making additions consider the following:
+
+1. Does my addition follow the conventions already in place?
+2. Does my code belong where I have placed it?
+3. Does my syntax resemble the Git CLI?
+
+If you can answer "yes" to these 3 questions, then send a pull request!
 
 ## Author
 Gitty was written by Gordon Hall (gordon@gordonwritescode.com)  

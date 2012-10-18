@@ -9,6 +9,10 @@ var Repository = require('./classes/repository.js')
   , Command = require('./classes/command.js')
   , pty = require('pty.js');
 
+////
+// config(key, val, callback) 
+// Does global Git configuration
+////
 function config(key, val, callback) {
 	var gitConfig = new Command(__dirname, 'config', ['--global', key], '"' + val + '"');
 	gitConfig.exec(function(error, stdout, stderr) {
@@ -19,6 +23,10 @@ function config(key, val, callback) {
 	});
 };
 
+////
+// clone(path, url, callback, creds) 
+// Clones the repository at url into the specified path
+////
 function clone(path, url, callback, creds) {
 	var pterm = pty.spawn('git', ['clone', url], { cwd : path })
 	  , repo = this

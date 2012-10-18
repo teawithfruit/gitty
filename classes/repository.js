@@ -36,6 +36,7 @@ Repository.prototype.init = function(callback, flags) {
 	  , repo = this;
 	gitInit.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
+		repo.isRepository = fs.existsSync(repo.path + '/.git');
 		callback.call(repo, err);
 	});
 };
