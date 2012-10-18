@@ -5,8 +5,8 @@
  * Test script and example of usage
  */
 
-var Repository = require('./index.js').Repository
-  , Gitty = new Repository(__dirname);
+var git = require('./index.js')
+  , Gitty = new git.Repository(__dirname);
   
 Gitty.log(function(err, log) {
 	if (err) {

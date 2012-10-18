@@ -5,17 +5,45 @@
  * Initializes module and exposes public methods
  */
 
-function config() {
-	// do git config
+var Repository = require('./classes/repository.js')
+  , Command = require('./classes/command.js')
+  , pty = require('pty.js');
+
+function config(key, val, callback) {
+	var gitConfig = new Command(__dirname, 'config', ['--global', key], '"' + val + '"');
+	gitConfig.exec(function(error, stdout, stderr) {
+		var err = error || stderr;
+		if (callback) {
+			callback.call(this, err);
+		}
+	});
 };
 
 function clone(path, url, callback, creds) {
-	// do git clone
+	var pterm = pty.spawn('git', ['clone', url], { cwd : path })
+	  , repo = this
+	  , err
+	  , succ;
+	pterm.on('data', function(data) {
+		var prompt = data.toLowerCase();
+		if (prompt.indexOf('username') > -1) {
+			pterm.write(creds.user + '\r');
+		} else if (prompt.indexOf('password') > -1) {
+			pterm.write(creds.pass + '\r');
+		} else if ((prompt.indexOf('error') > -1) || (prompt.indexOf('fatal') > -1)) {
+			err = prompt;
+		} else {
+			succ = prompt;
+		}
+	});
+	pterm.on('end', function() {
+		callback.call(repo, err, succ);
+	});
 };
 
 module.exports = {
-	Repository : require('./classes/repository.js'),
-	Command : require('./classes/command.js'),
+	Repository : Repository,
+	Command : Command,
 	clone : clone,
 	config : config
 };
