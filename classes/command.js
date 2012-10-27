@@ -21,11 +21,7 @@ Command = function(repo_path, operation, flags, options) {
 };
 
 Command.prototype.exec = function(callback) {
-	if (fs.existsSync(this.repo + '/.git')) {
-		exec(this.command, { cwd : this.repo }, callback);
-	} else {
-		throw new Error(this.repo + ' is not a valid Git repository.');
-	}
+	exec(this.command, { cwd : this.repo }, callback);
 };
 
 module.exports = Command;
