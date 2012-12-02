@@ -28,7 +28,7 @@ function config(key, val, callback) {
 // Clones the repository at url into the specified path
 ////
 function clone(path, url, callback, creds) {
-	var pterm = pty.spawn('git', ['clone', url], { cwd : path })
+	var pterm = pty.spawn('git', ['clone', url, path], { cwd : path })
 	  , repo = this
 	  , err
 	  , succ;
