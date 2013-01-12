@@ -37,7 +37,7 @@ Repository.prototype.init = function(callback, flags) {
 	gitInit.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
 		repo.isRepository = fs.existsSync(repo.path + '/.git');
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -55,7 +55,7 @@ Repository.prototype.log = function(callback) {
 		if (output) {
 			output = parse['log'](output);
 		}
-		callback.call(repo, err, output);
+		if (callback && typeof callback === 'function') callback.call(repo, err, output);
 	});
 };
 
@@ -76,7 +76,7 @@ Repository.prototype.status = function(callback) {
 				err = error || stderr;
 			}
 			status = parse['status'](status, untracked);
-			callback.call(repo, err, status);
+			if (callback && typeof callback === 'function') callback.call(repo, err, status);
 		});
 	});
 };
@@ -91,7 +91,7 @@ Repository.prototype.add = function(files, callback) {
 	  , repo = this;
 	gitAdd.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -105,7 +105,7 @@ Repository.prototype.remove = function(files, callback) {
 	  , repo = this;
 	gitRm.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -119,7 +119,7 @@ Repository.prototype.unstage = function(files, callback) {
 	  , repo = this;
 	gitUnstage.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -134,7 +134,11 @@ Repository.prototype.commit = function(message, callback) {
 	gitCommit.exec(function(error, stdout, stderr) {
 		var err = error || stderr
 		  , data = (stdout) ? parse['commit'](stdout) : null;
-		callback.call(repo, err, data);
+		if (data.error) {
+			err = data.error;
+			data = null;
+		}
+		if (callback && typeof callback === 'function') callback.call(repo, err, data);
 	});
 };
 
@@ -148,7 +152,7 @@ Repository.prototype.branches = function(callback) {
 	gitBranches.exec(function(error, stdout, stderr) {
 		var err = error || stderr
 		  , branches = parse['branch'](stdout);
-		callback.call(this, err, branches);
+		if (callback && typeof callback === 'function') callback.call(this, err, branches);
 	});
 };
 
@@ -161,7 +165,7 @@ Repository.prototype.branch = function(name, callback) {
 	  , repo = this;
 	gitBranch.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -176,7 +180,7 @@ Repository.prototype.checkout = function(branch, callback) {
 		var err = error || stderr;
 		repo.branches(function(err, branches) {
 			var branchesErr = err;
-			callback.call(repo, err || branchesErr, branches);
+			if (callback && typeof callback === 'function') callback.call(repo, err || branchesErr, branches);
 		});
 	});
 };
@@ -190,7 +194,7 @@ Repository.prototype.merge = function(branch, callback) {
 	  , repo = this;
 	getMerge.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -210,7 +214,7 @@ Repository.prototype.remote.add = function(remote, url, callback) {
 	  , repo = this;
 	gitRemoteAdd.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -224,7 +228,7 @@ Repository.prototype.remote.setUrl = function(remote, url, callback) {
 	  , repo = this;
 	gitRemoteSetUrl.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -237,7 +241,7 @@ Repository.prototype.remote.remove = function(remote, callback) {
 	  , repo = this;
 	gitRemoteRemove.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
-		callback.call(repo, err);
+		if (callback && typeof callback === 'function') callback.call(repo, err);
 	});
 };
 
@@ -254,7 +258,7 @@ Repository.prototype.remote.list = function(callback) {
 		if (output) {
 			output = parse['remotes'](output);
 		}
-		callback.call(repo, err, output);
+		if (callback && typeof callback === 'function') callback.call(repo, err, output);
 	});
 };
 
@@ -299,7 +303,7 @@ function sync(path, operation, remote, branch, callback, creds) {
 		}
 	});
 	pterm.on('end', function() {
-		callback.call(repo, err, succ);
+		if (callback && typeof callback === 'function') callback.call(repo, err, succ);
 	});
 };
 
@@ -315,7 +319,7 @@ Repository.prototype.reset = function(hash, callback) {
 		err = error || stderr || err;
 		repo.log(function(logErr, log) {
 			err = logErr || err;
-			callback.call(repo, err, log);
+			if (callback && typeof callback === 'function') callback.call(repo, err, log);
 		});
 	});
 };

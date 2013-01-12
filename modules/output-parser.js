@@ -65,18 +65,35 @@ parsers['status'] = function(gitstatus, untracked) {
 // git commit
 ////
 parsers['commit'] = function(output) {
-	var splitOutput = output.split('\n')
-	  , branchAndHash = splitOutput[0].match(/\[([^\]]+)]/g)[0]
-	  , branch = branchAndHash.substring(1, branchAndHash.length - 1).split(' ')[0]
-	  , hash = branchAndHash.substring(1, branchAndHash.length - 1).split(' ')[1]
-	  , filesChanged = splitOutput[1].split(' ')[0]
-	  , operations = splitOutput.splice(2);
-	return {
-		branch : branch,
-		commit : hash,
-		changed : filesChanged,
-		operations : operations
-	};
+	var commitFailed = (output.indexOf('nothing to commit') > -1 || output.indexOf('no changes added to commit') > -1)
+	// if there is nothing to commit...
+	if (commitFailed) {
+		function reason(output) {
+			var lines = output.split('\n')
+			  , message;
+			for (var ln = 0; ln < lines.length; ln++) {
+				if (lines[ln].indexOf('#') === -1) {
+					return lines[ln];
+				}
+			};
+		};
+		return {
+			error : reason(output)
+		};
+	} else {
+		var splitOutput = output.split('\n')
+		  , branchAndHash = splitOutput[0].match(/\[([^\]]+)]/g)[0]
+		  , branch = branchAndHash.substring(1, branchAndHash.length - 1).split(' ')[0]
+		  , hash = branchAndHash.substring(1, branchAndHash.length - 1).split(' ')[1]
+		  , filesChanged = splitOutput[1].split(' ')[0]
+		  , operations = splitOutput.splice(2);
+		return {
+			branch : branch,
+			commit : hash,
+			changed : filesChanged,
+			operations : operations
+		};
+	}
 };
 
 ////
