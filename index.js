@@ -44,7 +44,7 @@ function clone(path, url, callback, creds) {
 			succ = prompt;
 		}
 	});
-	pterm.on('end', function() {
+	pterm.on('exit', function() {
 		callback.call(repo, err, succ);
 	});
 };
