@@ -134,7 +134,7 @@ Repository.prototype.commit = function(message, callback, useSync) {
 	gitCommit.exec(function(error, stdout, stderr) {
 		var err = error || stderr
 		  , data = (stdout) ? parse['commit'](stdout) : null;
-		if (data.error) {
+		if (data && data.error) {
 			err = data.error;
 			data = null;
 		}
