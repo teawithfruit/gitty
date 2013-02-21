@@ -25,6 +25,7 @@ Command.prototype.exec = function(callback, sync) {
 	if (!sync) {
 		exec(this.command, { cwd : this.repo }, callback);
 	} else {
+		process.chdir(this.repo)
 		var stdout = execSync(this.command)
 		callback(null, stdout);
 	}
