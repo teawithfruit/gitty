@@ -6,6 +6,7 @@
  */
 
 var exec = require('child_process').exec
+  , execSync = require('execSync').stdout
   , Command;
   
 Command = function(repo_path, operation, flags, options) {
@@ -20,8 +21,13 @@ Command = function(repo_path, operation, flags, options) {
 	this.command +=  ' ' + options;	
 };
 
-Command.prototype.exec = function(callback) {
-	exec(this.command, { cwd : this.repo }, callback);
+Command.prototype.exec = function(callback, sync) {
+	if (!sync) {
+		exec(this.command, { cwd : this.repo }, callback);
+	} else {
+		var stdout = execSync(this.command)
+		callback(null, stdout);
+	}
 };
 
 module.exports = Command;

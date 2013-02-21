@@ -45,7 +45,7 @@ Repository.prototype.init = function(callback, flags) {
 // Repository.log(callback)
 // Passes commit history as array to callback
 ////
-Repository.prototype.log = function(callback) {
+Repository.prototype.log = function(callback, useSync) {
 	var format = '--pretty=format:\'{"commit": "%H","author": "%an <%ae>","date": "%ad","message": "%s"},\''
 	  , gitLog = new Command(this.path, 'log', [format], '')
 	  , repo = this;
@@ -56,7 +56,7 @@ Repository.prototype.log = function(callback) {
 			output = parse['log'](output);
 		}
 		if (callback && typeof callback === 'function') callback.call(repo, err, output);
-	});
+	}, useSync);
 };
 
 ////
@@ -85,14 +85,14 @@ Repository.prototype.status = function(callback) {
 // Repository.add([files], callback)
 // Stages the passed array of files for commit
 ////
-Repository.prototype.add = function(files, callback) {
+Repository.prototype.add = function(files, callback, useSync) {
 	var options = files.join(' ')
 	  , gitAdd = new Command(this.path, 'add', [], options)
 	  , repo = this;
 	gitAdd.exec(function(error, stdout, stderr) {
 		var err = error || stderr;
 		if (callback && typeof callback === 'function') callback.call(repo, err);
-	});
+	}, useSync);
 };
 
 ////
@@ -127,7 +127,7 @@ Repository.prototype.unstage = function(files, callback) {
 // Repository.commit(message, callback)
 // Commits the current staged files
 ////
-Repository.prototype.commit = function(message, callback) {
+Repository.prototype.commit = function(message, callback, useSync) {
 	var options = '"' + message + '"'
 	  , gitCommit = new Command(this.path, 'commit', ['-m'], options)
 	  , repo = this;
@@ -139,7 +139,7 @@ Repository.prototype.commit = function(message, callback) {
 			data = null;
 		}
 		if (callback && typeof callback === 'function') callback.call(repo, err, data);
-	});
+	}, useSync);
 };
 
 ////

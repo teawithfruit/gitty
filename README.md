@@ -94,9 +94,9 @@ Initializes the directory as a Git repository.
 * Type: `Array`
 * Description: Command flags like `['--bare','--shared']`
 
-#### Repository.log(callback)
+#### Repository.log(callback, useSync)
 
-Passes commit history as array to callback
+Passes commit history as array to callback. Optionally do this this synchronously - not recommended
 
 **callback**
 * Type: `Function`
@@ -110,9 +110,9 @@ Passes a status object into the callback
 * Type: `Function`
 * Description: Receives argument(s): `(err, status)`
 
-#### Repository.add(files, callback)
+#### Repository.add(files, callback, useSync)
 
-Stages the passed array of files for commit
+Stages the passed array of files for commit. Optionally do this this synchronously - not recommended
 
 **callback**
 * Type: `Function`
@@ -134,9 +134,9 @@ Removes passed array of files from staging area
 * Type: `Function`
 * Description: Receives argument(s): `(err)`
 
-#### Repository.commit(message, callback)
+#### Repository.commit(message, callback, useSync)
 
-Commits the current staged files
+Commits the current staged files. Optionally do this this synchronously - not recommended
 
 **message**
 * Type: `String`
