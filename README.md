@@ -35,7 +35,8 @@ var git = require('gitty');
 The "meat" of the functionality is encapsulated in instances of a `Repository` object. This object is instantiated with the path to the repository you wish to perform actions on.
 
 ```javascript
-var myRepo = new git.Repository('/path/to/repo');
+var myRepo = git('/path/to/repo');
+// sugar for --> new git.Repository('/path/to/repo');
 ```
 
 Now you can call this instance of `Repository`'s methods. For example, to execute `git log` for `myRepo`, you would do:
@@ -63,6 +64,14 @@ A complete list of the available methods is below, as well as other Gitty functi
 ### Repository(path)
 
 Creates an instance of `gitty.Repository` from the given `path`. Each instance contains the following properties and has access to the following methods.
+
+#### Repository.graph(callback) - **NEW IN 1.2.1!!!**
+
+Passes a 2-dimensional array to the callback containing data that can be consumed by a UI for generating a network graph
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, graph_data)`
 
 #### Repository.isRepository
 

@@ -1,5 +1,3 @@
 .project
-<<<<<<< HEAD
-=======
 node_modules
->>>>>>> c657b610c5abcf2670ccc9e896e0559a624d882c
+test.js

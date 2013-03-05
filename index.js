@@ -7,7 +7,12 @@
 
 var Repository = require('./classes/repository.js')
   , Command = require('./classes/command.js')
-  , pty = require('pty.js');
+  , pty = require('pty.js')
+  , gitty;
+
+gitty = function(path) {
+	return new Repository(path);
+};
 
 ////
 // config(key, val, callback) 
@@ -49,9 +54,9 @@ function clone(path, url, callback, creds) {
 	});
 };
 
-module.exports = {
-	Repository : Repository,
-	Command : Command,
-	clone : clone,
-	config : config
-};
+gitty.config = config;
+gitty.clone = clone;
+gitty.Repository = Repository;
+gitty.Command = Command;
+
+module.exports = gitty;

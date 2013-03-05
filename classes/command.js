@@ -1,5 +1,5 @@
 /*
- * Gitty - execute.js
+ * Gitty - command.js
  * Author: Gordon Hall
  * 
  * Handles the execution of Git commands

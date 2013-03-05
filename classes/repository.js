@@ -324,5 +324,23 @@ Repository.prototype.reset = function(hash, callback) {
 	});
 };
 
+////
+// Repository.reset(hash, callback)
+// Resets the repository's HEAD to the specified commit and passes commit log to callback
+////
+Repository.prototype.graph = function(callback) {
+	var gitGraph = new Command(this.path, 'log', ['--graph', '--pretty=oneline', '--abbrev-commit'], '')
+	  , repo = this
+	  , err
+	  , graph;
+	gitGraph.exec(function(error, stdout, stderr) {
+		err = error || stderr || err;
+		if (!err && stdout) {
+			graph = require('../modules/grapher.js')(stdout);
+		}
+		if (callback && typeof callback === 'function') callback.call(repo, err, graph);
+	});
+};
+
 // Export Constructor
 module.exports = Repository;
