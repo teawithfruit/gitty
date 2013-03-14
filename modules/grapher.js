@@ -15,7 +15,6 @@ function init(data) {
 			graph.push(parseLine(val));
 		}
 	});
-	console.log(graph);
 };
 
 // parses an individual line into ui consumable objects
