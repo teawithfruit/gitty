@@ -302,7 +302,7 @@ function sync(path, operation, remote, branch, callback, creds) {
 			succ = parse['syncSuccess'](prompt);
 		}
 	});
-	pterm.on('end', function() {
+	pterm.on('exit', function() {
 		if (callback && typeof callback === 'function') callback.call(repo, err, succ);
 	});
 };
