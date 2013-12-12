@@ -247,7 +247,7 @@ Passes key-value pairs to callback formatted: `remote : url`
 * Type: `Function`
 * Description: Receives argument(s): `(err, remotes)`
 
-#### Repository.push(remote, branch, callback, creds)
+#### Repository.push(remote, branch, flags, callback, creds)
 
 Pushes the specified branch to the specified remote
 
@@ -269,7 +269,7 @@ Pushes the specified branch to the specified remote
 
 > **Note:** This method does not use an instance of `Command()`, see *Authenticated Repositories*
 
-#### Repository.pull(remote, branch, callback, creds)
+#### Repository.pull(remote, branch, flags, callback, creds)
 
 Pulls the specified branch from the specified remote
 

@@ -266,16 +266,16 @@ Repository.prototype.remote.list = function(callback) {
 // Repository.push(remote, branch, callback, creds)
 // Pushes the specified branch to the specified remote
 ////
-Repository.prototype.push = function(remote, branch, callback, creds) {
-	sync(this.path, 'push', remote, branch, callback, creds);
+Repository.prototype.push = function(remote, branch, flags, callback, creds) {
+	sync(this.path, 'push', remote, branch, flags, callback, creds);
 };
 
 ////
 // Repository.pull(remote, branch, callback, creds)
 // Pulls the specified branch from the specified remote
 ////
-Repository.prototype.pull = function(remote, branch, callback, creds) {
-	sync(this.path, 'pull', remote, branch, callback, creds);
+Repository.prototype.pull = function(remote, branch, flags, callback, creds) {
+	sync(this.path, 'pull', remote, branch, flags, callback, creds);
 };
 
 ////
@@ -285,12 +285,14 @@ Repository.prototype.pull = function(remote, branch, callback, creds) {
 // This is because SSH does not read creds from stdin, 
 // but instead, a pseudo-terminal.
 ////
-function sync(path, operation, remote, branch, callback, creds) {
-	var pterm = pty.spawn('git', [operation, remote, branch], { cwd : path })
+function sync(path, operation, remote, branch, flags, callback, creds) {
+	var operations = [operation, remote, branch].concat(flags || [])
+	  , pterm = pty.spawn('git', operations, { cwd : path })
 	  , repo = this
 	  , err
 	  , succ;
 	pterm.on('data', function(data) {
+		console.log(data);
 		var prompt = data.toLowerCase();
 		if (prompt.indexOf('username') > -1) {
 			pterm.write(creds.user + '\r');
