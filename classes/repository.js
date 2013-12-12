@@ -25,6 +25,8 @@ Repository = function(repo) {
 	this.name = split_path[split_path.length - 1];
 	// set path
 	this.path = repo_path;
+	// make path available to repo.remote.*
+	this.remote.path = this.path;
 };
 
 ////
