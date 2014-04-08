@@ -329,8 +329,9 @@ Repository.prototype.reset = function(hash, callback) {
 };
 
 ////
-// Repository.reset(hash, callback)
-// Resets the repository's HEAD to the specified commit and passes commit log to callback
+// Repository.graph(callback)
+// Passes a 2-dimensional array to the callback containing data that can be
+// consumed by a UI for generating a network graph
 ////
 Repository.prototype.graph = function(callback) {
 	var gitGraph = new Command(this.path, 'log', ['--graph', '--pretty=oneline', '--abbrev-commit'], '')
