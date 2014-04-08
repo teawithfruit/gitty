@@ -118,6 +118,19 @@ parsers['branch'] = function(output) {
 };
 
 ////
+// git tag
+////
+parsers['tag'] = function(output) {
+	var tags = output.split(/\r?\n/);
+	for (var i = 0; i < tags.length; i++) {
+		if (!tags[i].length) {
+			tags.splice(i, 1);
+		}
+	}
+	return tags;
+};
+
+////
 // git remote -v
 ////
 parsers['remotes'] = function(output) {

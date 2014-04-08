@@ -195,6 +195,22 @@ Performs a merge of the current branch with the specified one
 * Type: `Function`
 * Description: Receives argument(s): `(err)`
 
+#### Repository.tags(callback)
+
+Passes array of repository's tags
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err, tags)`
+
+#### Repository.tag(name, callback)
+
+Creates a new tag from the given tag name
+
+**callback**
+* Type: `Function`
+* Description: Receives argument(s): `(err)`
+
 #### Repository.remote.add(name, url, callback)
 
 Adds a new remote
