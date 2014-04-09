@@ -201,6 +201,33 @@ Repository.prototype.merge = function(branch, callback) {
 };
 
 ////
+// Repository.tags(callback)
+// Passes array of repository's tags
+////
+Repository.prototype.tags = function(callback) {
+	var gitTags = new Command(this.path, 'tag', [], '')
+	  , repo = this;
+	gitTags.exec(function(error, stdout, stderr) {
+		var err = error || stderr
+		  , tags = parse['tag'](stdout);
+		if (callback && typeof callback === 'function') callback.call(this, err, tags);
+	});
+};
+
+////
+// Repository.tag(tag, callback)
+// Creates a new tag from the given tag name
+////
+Repository.prototype.tag = function(name, callback) {
+	var gitTag = new Command(this.path, 'tag', [], name)
+	  , repo = this;
+	gitTag.exec(function(error, stdout, stderr) {
+		var err = error || stderr;
+		if (callback && typeof callback === 'function') callback.call(repo, err);
+	});
+};
+
+////
 // Repository.remote
 // Subset of methods for handling remotes
 ////
