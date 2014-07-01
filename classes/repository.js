@@ -1,7 +1,7 @@
 /*
  * Gitty - repository.js
  * Author: Gordon Hall
- * 
+ *
  * Primary repository class that exposes all repository level operations
  */
 
@@ -68,7 +68,7 @@ Repository.prototype.log = function(callback, useSync) {
 Repository.prototype.status = function(callback) {
 	var gitStatus = new Command(this.path, 'status', [], '')
 	  , gitLsFiles = new Command(this.path, 'ls-files', ['--other','--exclude-standard'], '')
-	  , repo = this;	
+	  , repo = this;
 	gitStatus.exec(function(error, stdout, stderr) {
 		var status = stdout
 		  , err = error || stderr;
@@ -311,7 +311,7 @@ Repository.prototype.pull = function(remote, branch, flags, callback, creds) {
 // sync(operation, remote, branch, callback, creds)
 // ----
 // Creates a fake terminal to push or pull from remote
-// This is because SSH does not read creds from stdin, 
+// This is because SSH does not read creds from stdin,
 // but instead, a pseudo-terminal.
 ////
 function sync(path, operation, remote, branch, flags, callback, creds) {
@@ -361,17 +361,32 @@ Repository.prototype.reset = function(hash, callback) {
 // consumed by a UI for generating a network graph
 ////
 Repository.prototype.graph = function(callback) {
-	var gitGraph = new Command(this.path, 'log', ['--graph', '--pretty=oneline', '--abbrev-commit'], '')
-	  , repo = this
-	  , err
-	  , graph;
-	gitGraph.exec(function(error, stdout, stderr) {
-		err = error || stderr || err;
-		if (!err && stdout) {
-			graph = require('../modules/grapher.js')(stdout);
-		}
-		if (callback && typeof callback === 'function') callback.call(repo, err, graph);
-	});
+  var gitGraph = new Command(this.path, 'log', ['--graph', '--pretty=oneline', '--abbrev-commit'], '')
+    , repo = this
+    , err
+    , graph;
+  gitGraph.exec(function(error, stdout, stderr) {
+    err = error || stderr || err;
+    if (!err && stdout) {
+      graph = require('../modules/grapher.js')(stdout);
+    }
+    if (callback && typeof callback === 'function') callback.call(repo, err, graph);
+  });
+};
+
+////
+// Repository.describe(callback)
+// passes the current commit hash to the callback
+////
+Repository.prototype.describe = function(callback) {
+  var gitDescribe = new Command(this.path, 'describe', ['--tags', '--always', '--long'], '')
+    , repo = this
+    , err
+    , graph;
+  gitDescribe.exec(function(error, stdout, stderr) {
+    err = error || stderr || err;
+    if (callback && typeof callback === 'function') callback.call(repo, err, stdout);
+  });
 };
 
 // Export Constructor
