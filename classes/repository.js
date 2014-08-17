@@ -145,11 +145,12 @@ Repository.prototype.commit = function(message, callback, useSync) {
 };
 
 ////
-// Repository.branches(callback)
+// Repository.branches(callback, parameter)
 // Passes object denoting current branch and array of other branches
 ////
-Repository.prototype.branches = function(callback) {
-	var gitBranches = new Command(this.path, 'branch', [], '')
+Repository.prototype.branches = function(callback, parameter) {
+	parameter = typeof parameter != 'undefined' ? parameter : [];
+	var gitBranches = new Command(this.path, 'branch', parameter, '')
 	  , repo = this;
 	gitBranches.exec(function(error, stdout, stderr) {
 		var err = error || stderr
