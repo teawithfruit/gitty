@@ -1,6 +1,6 @@
 {
   "name": "gitty",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
   "dependencies": {
