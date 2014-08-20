@@ -390,5 +390,22 @@ Repository.prototype.describe = function(callback) {
   });
 };
 
+/**
+ * Repository.cherryPick(commit, callback, flags)
+ * Allows cherry-picking
+ * @param  {string}   commit   Commit string
+ * @param  {Function} callback callback-function
+ * @param  {array}   flags    flags if needed
+ */
+Repository.prototype.cherryPick = function(commit, callback, flags) {
+	var gitClean = new Command(this.path, 'cherry-pick ' + commit, [], '')
+	  , repo = this;
+	gitClean.exec(function(error, stdout, stderr) {		
+		var err = error || stderr;
+		repo.isRepository = fs.existsSync(repo.path + '/.git');
+		if (callback && typeof callback === 'function') callback.call(repo, err);		
+	});
+};
+
 // Export Constructor
 module.exports = Repository;
