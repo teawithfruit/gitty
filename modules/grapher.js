@@ -5,6 +5,11 @@
  * Parses textual network graph into 2D array of UI data
  */
 
+/**
+ * Prepares a textual network stack into a 2-dim-array of UI data objects
+ * @param  {String} data
+ * @return {Array}
+ */
 function init(data) {
 	// split first dimension of data by newline
 	var graph = []
@@ -17,7 +22,11 @@ function init(data) {
 	});
 };
 
-// parses an individual line into ui consumable objects
+/**
+ * Internal function to transform one individual line into ui consumable objects
+ * @param  {String} line
+ * @return {Array}
+ */
 function parseLine(line) {
 	var parsed = [];
 	for (var chr = 0; chr < line.length; chr++) {
@@ -63,4 +72,9 @@ function parseLine(line) {
 	return parsed;
 };
 
+/**
+ * Export Contructor
+ * @constructor
+ * @type {Object}
+ */
 module.exports = init;

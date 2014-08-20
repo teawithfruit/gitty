@@ -10,14 +10,21 @@ var Repository = require('./classes/repository.js')
   , pty = require('pty.js')
   , gitty;
 
+/**
+ * Setup function for getting access to a GIT repo
+ * @constructor
+ * @param  {String} path
+ */
 gitty = function(path) {
 	return new Repository(path);
 };
 
-////
-// config(key, val, callback) 
-// Does global Git configuration
-////
+/**
+ * Handles the global GIT configuration
+ * @param  {String}   key
+ * @param  {String}   val
+ * @param  {Function} callback
+ */
 function config(key, val, callback) {
 	var gitConfig = new Command(__dirname, 'config', ['--global', key], '"' + val + '"');
 	gitConfig.exec(function(error, stdout, stderr) {
@@ -28,10 +35,13 @@ function config(key, val, callback) {
 	});
 };
 
-////
-// clone(path, url, callback, creds) 
-// Clones the repository at url into the specified path
-////
+/**
+ * Wrapper for the GIT clone function
+ * @param  {String}   path
+ * @param  {String}   url
+ * @param  {Function} callback
+ * @param  {Object}   creds
+ */
 function clone(path, url, callback, creds) {
 	var pterm = pty.spawn('git', ['clone', url, path], { cwd : path })
 	  , repo = this
@@ -59,4 +69,9 @@ gitty.clone = clone;
 gitty.Repository = Repository;
 gitty.Command = Command;
 
+/**
+ * Export Contructor
+ * @constructor
+ * @type {Object}
+ */
 module.exports = gitty;
