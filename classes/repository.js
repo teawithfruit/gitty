@@ -157,9 +157,11 @@ Repository.prototype.commit = function(message, callback, useSync) {
 /**
  * Forwards a denoted object with the current branch and all other available branches to the callback function
  * @param  {Function} callback
+ * @param {array} parameter parameter to add to the function
  */
-Repository.prototype.branches = function(callback) {
-	var gitBranches = new Command(this.path, 'branch', [], '')
+Repository.prototype.branches = function(callback, parameter) {
+	parameter = typeof parameter != 'undefined' ? parameter : [];
+	var gitBranches = new Command(this.path, 'branch', parameter, '')
 	  , repo = this;
 	gitBranches.exec(function(error, stdout, stderr) {
 		var err = error || stderr
@@ -422,8 +424,24 @@ Repository.prototype.describe = function(callback) {
 };
 
 /**
- * Export Contructor
- * @constructor
+ * Repository.cherryPick(commit, callback, flags)
+ * Allows cherry-picking
+ * @param  {string}   commit   Commit string
+ * @param  {Function} callback callback-function
+ * @param  {array}   flags    flags if needed
+ */
+Repository.prototype.cherryPick = function(commit, callback, flags) {
+	var gitClean = new Command(this.path, 'cherry-pick ' + commit, [], '')
+	  , repo = this;
+	gitClean.exec(function(error, stdout, stderr) {		
+		var err = error || stderr;
+		repo.isRepository = fs.existsSync(repo.path + '/.git');
+		if (callback && typeof callback === 'function') callback.call(repo, err);		
+	});
+};
+
+/**
+ * Export Constructor
  * @type {Object}
  */
 module.exports = Repository;
