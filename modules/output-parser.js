@@ -24,6 +24,15 @@ parsers['log'] = function(output) {
 	  , commits;
 	log += output.substring(0, output.length - 1);
 	log += ']';
+
+	// this function cleans the commit log from any double quotes breaking the JSON string
+	var h = log.match(/".*?": "(.*?)"[,}]/g);
+	for (var i = h.length - 1; i >= 0; i--) {
+		var hh = h[i].replace(/".*?": "(.*?)"[,}]/g, '$1');
+		var hhh = hh.replace(/\"/g, '\\"');
+		log = log.replace(hh, hhh);	
+	};
+
 	commits = JSON.parse(log);
 	return commits;
 };
