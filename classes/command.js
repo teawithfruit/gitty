@@ -8,7 +8,15 @@
 var exec = require('child_process').exec
   , execSync = require('execSync').stdout
   , Command;
-  
+ 
+/**
+ * Setup function for running GIT commands on the command line
+ * @constructor
+ * @param {String} repo_path
+ * @param {String} operation
+ * @param {Array} flags
+ * @param {Array} options
+ */
 Command = function(repo_path, operation, flags, options) {
 	this.repo = repo_path;
 	// assemble command
@@ -21,6 +29,11 @@ Command = function(repo_path, operation, flags, options) {
 	this.command +=  ' ' + options;	
 };
 
+/**
+ * Executes the stored operation in the given path
+ * @param  {Function} callback
+ * @param  {Boolean}   sync
+ */
 Command.prototype.exec = function(callback, sync) {
 	if (!sync) {
 		exec(this.command, { cwd : this.repo }, callback);
@@ -35,4 +48,9 @@ Command.prototype.exec = function(callback, sync) {
 	}
 };
 
+/**
+ * Export Contructor
+ * @constructor
+ * @type {Object}
+ */
 module.exports = Command;

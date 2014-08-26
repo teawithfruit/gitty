@@ -5,23 +5,44 @@
  * Exposes parsing functions for different console output
  */
 
+/**
+ * Parser
+ * @type {Object}
+ */
 var parsers = {};
 
 ////
 // git log
 ////
+/**
+ * Logger function
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['log'] = function(output) {
 	var log = '['
 	  , commits;
 	log += output.substring(0, output.length - 1);
 	log += ']';
+
+	// this function cleans the commit log from any double quotes breaking the JSON string
+	var h = log.match(/".*?": "(.*?)"[,}]/g);
+	for (var i = h.length - 1; i >= 0; i--) {
+		var hh = h[i].replace(/".*?": "(.*?)"[,}]/g, '$1');
+		var hhh = hh.replace(/\"/g, '\\"');
+		log = log.replace(hh, hhh);	
+	};
+
 	commits = JSON.parse(log);
 	return commits;
 };
 
-////
-// git status
-////
+/**
+ * Output Handler for GIT status
+ * @param  {String} gitstatus
+ * @param  {String} untracked
+ * @return {String}
+ */
 parsers['status'] = function(gitstatus, untracked) {
 	// create status object
 	var status = {
@@ -61,9 +82,11 @@ parsers['status'] = function(gitstatus, untracked) {
 	return status;
 };
 
-////
-// git commit
-////
+/**
+ * Output handler for GIT commit
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['commit'] = function(output) {
 	var commitFailed = (output.indexOf('nothing to commit') > -1 || output.indexOf('no changes added to commit') > -1)
 	// if there is nothing to commit...
@@ -96,9 +119,11 @@ parsers['commit'] = function(output) {
 	}
 };
 
-////
-// git branch
-////
+/**
+ * Output handler for GIT branch command
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['branch'] = function(output) {
 	var tree = {
 		current : null,
@@ -117,9 +142,11 @@ parsers['branch'] = function(output) {
 	return tree;
 };
 
-////
-// git tag
-////
+/**
+ * Output handler for GIT tag command
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['tag'] = function(output) {
 	var tags = output.split(/\r?\n/);
 	for (var i = 0; i < tags.length; i++) {
@@ -130,9 +157,11 @@ parsers['tag'] = function(output) {
 	return tags;
 };
 
-////
-// git remote -v
-////
+/**
+ * Output handler for GIT remote -v command
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['remotes'] = function(output) {
 	var list = {}
       , parseme = output.split('\n');
@@ -143,9 +172,11 @@ parsers['remotes'] = function(output) {
 	return list;
 };
 
-////
-// git push/pull error
-////
+/**
+ * Output handler for GIT errors from GIT push and pull commands
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['syncErr'] = function(output) {
 	var result = output.split('\r\n');
 	for (var i = 0; i < result.length; i++) {
@@ -156,12 +187,19 @@ parsers['syncErr'] = function(output) {
 	return result;
 };
 
-////
-// git push/pull success
-////
+/**
+ * Output handler for GIT success messages from GIT push and pull commands
+ * @param  {String} output
+ * @return {String}
+ */
 parsers['syncSuccess'] = function(output) {
 	var result = output;
 	return result;
 };
 
+/**
+ * Export Contructor
+ * @constructor
+ * @type {Object}
+ */
 module.exports = parsers;

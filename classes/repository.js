@@ -12,9 +12,11 @@ var fs = require('fs')
   , pty = require('pty.js')
   , Repository;
 
-////
-// Repository Constructor
-////
+/**
+ * Constructor function for all repositpry commands
+ * @constructor
+ * @param {String} repo
+ */
 Repository = function(repo) {
 	// create assumed path to .git directory
 	var repo_path = path.normalize(repo)
@@ -29,10 +31,11 @@ Repository = function(repo) {
 	this.remote.path = this.path;
 };
 
-////
-// Repository.init(callback, [flags])
-// Initializes the directory as a Git repository
-////
+/**
+ * Initializes the given directory as a GIT repository
+ * @param  {Function} callback
+ * @param  {Array}   flags
+ */
 Repository.prototype.init = function(callback, flags) {
 	var gitInit = new Command(this.path, 'init', (flags || []), '')
 	  , repo = this;
@@ -43,10 +46,11 @@ Repository.prototype.init = function(callback, flags) {
 	});
 };
 
-////
-// Repository.log(callback)
-// Passes commit history as array to callback
-////
+/**
+ * Forwards the commit history to the callback function
+ * @param  {Function} callback
+ * @param  {Boolean}   useSync
+ */
 Repository.prototype.log = function(callback, useSync) {
 	var format = '--pretty=format:\'{"commit": "%H","author": "%an <%ae>","date": "%ad","message": "%s"},\''
 	  , gitLog = new Command(this.path, 'log', [format], '')
@@ -61,10 +65,10 @@ Repository.prototype.log = function(callback, useSync) {
 	}, useSync);
 };
 
-////
-// Repository.status(callback)
-// Passes a status object into the callack
-////
+/**
+ * Forwards the GIT status object to the callback function
+ * @param  {Function} callback
+ */
 Repository.prototype.status = function(callback) {
 	var gitStatus = new Command(this.path, 'status', [], '')
 	  , gitLsFiles = new Command(this.path, 'ls-files', ['--other','--exclude-standard'], '')
@@ -83,10 +87,12 @@ Repository.prototype.status = function(callback) {
 	});
 };
 
-////
-// Repository.add([files], callback)
-// Stages the passed array of files for commit
-////
+/**
+ * Stages the passed array of files for commiting
+ * @param {Array}   files
+ * @param {Function} callback
+ * @param {Boolean}   useSync
+ */
 Repository.prototype.add = function(files, callback, useSync) {
 	var options = files.join(' ')
 	  , gitAdd = new Command(this.path, 'add', [], options)
@@ -97,10 +103,11 @@ Repository.prototype.add = function(files, callback, useSync) {
 	}, useSync);
 };
 
-////
-// Repository.remove([files], callback)
-// Removes the passed array of files for commit
-////
+/**
+ * Removes the passed array of files from the repo for commiting
+ * @param  {Array}   files
+ * @param  {Function} callback
+ */
 Repository.prototype.remove = function(files, callback) {
 	var options = files.join(' ')
 	  , gitRm = new Command(this.path, 'rm', ['--cached'], options)
@@ -111,10 +118,11 @@ Repository.prototype.remove = function(files, callback) {
 	});
 };
 
-////
-// Repository.unstage([files], callback)
-// Removes passed array of files from staging area
-////
+/**
+ * Unstages the passed array of files from the staging area
+ * @param  {Array}   files
+ * @param  {Function} callback
+ */
 Repository.prototype.unstage = function(files, callback) {
 	var options = files.join(' ')
 	  , gitUnstage = new Command(this.path, 'reset HEAD', [], options)
@@ -125,10 +133,12 @@ Repository.prototype.unstage = function(files, callback) {
 	});
 };
 
-////
-// Repository.commit(message, callback)
-// Commits the current staged files
-////
+/**
+ * Commits the staged area with the given message
+ * @param  {String}   message
+ * @param  {Function} callback
+ * @param  {Boolean}   useSync
+ */
 Repository.prototype.commit = function(message, callback, useSync) {
 	var options = '"' + message + '"'
 	  , gitCommit = new Command(this.path, 'commit', ['-m'], options)
@@ -144,10 +154,11 @@ Repository.prototype.commit = function(message, callback, useSync) {
 	}, useSync);
 };
 
-////
-// Repository.branches(callback, parameter)
-// Passes object denoting current branch and array of other branches
-////
+/**
+ * Forwards a denoted object with the current branch and all other available branches to the callback function
+ * @param  {Function} callback
+ * @param {array} parameter parameter to add to the function
+ */
 Repository.prototype.branches = function(callback, parameter) {
 	parameter = typeof parameter != 'undefined' ? parameter : [];
 	var gitBranches = new Command(this.path, 'branch', parameter, '')
@@ -159,10 +170,11 @@ Repository.prototype.branches = function(callback, parameter) {
 	});
 };
 
-////
-// Repository.branch(branch, callback)
-// Creates a new branch from the given branch name
-////
+/**
+ * Creates a new branch with the given branch name
+ * @param  {String}   name
+ * @param  {Function} callback
+ */
 Repository.prototype.branch = function(name, callback) {
 	var gitBranch = new Command(this.path, 'branch', [], name)
 	  , repo = this;
@@ -172,10 +184,11 @@ Repository.prototype.branch = function(name, callback) {
 	});
 };
 
-////
-// Repository.checkout(branch, callback)
-// Performs checkout on given branch
-////
+/**
+ * Performs a GIT checkout on the given branch
+ * @param  {String}   branch
+ * @param  {Function} callback
+ */
 Repository.prototype.checkout = function(branch, callback) {
 	var gitCheckout = new Command(this.path, 'checkout', [], branch)
 	  , repo = this;
@@ -188,10 +201,11 @@ Repository.prototype.checkout = function(branch, callback) {
 	});
 };
 
-////
-// Repository.merge(branch, callback)
-// Performs a merge of the current branch with the specified one
-////
+/**
+ * Performs a GIT merge in the current branch against the specified one
+ * @param  {String}   branch
+ * @param  {Function} callback
+ */
 Repository.prototype.merge = function(branch, callback) {
 	var gitMerge = new Command(this.path, 'merge', [], branch)
 	  , repo = this;
@@ -201,10 +215,10 @@ Repository.prototype.merge = function(branch, callback) {
 	});
 };
 
-////
-// Repository.tags(callback)
-// Passes array of repository's tags
-////
+/**
+ * Forwards a array of repositorys'tags to the callback function
+ * @param  {Function} callback
+ */
 Repository.prototype.tags = function(callback) {
 	var gitTags = new Command(this.path, 'tag', [], '')
 	  , repo = this;
@@ -215,10 +229,11 @@ Repository.prototype.tags = function(callback) {
 	});
 };
 
-////
-// Repository.tag(tag, callback)
-// Creates a new tag from the given tag name
-////
+/**
+ * Creates a new tag from the given tag name
+ * @param  {String}   name
+ * @param  {Function} callback
+ */
 Repository.prototype.tag = function(name, callback) {
 	var gitTag = new Command(this.path, 'tag', [], name)
 	  , repo = this;
@@ -228,16 +243,19 @@ Repository.prototype.tag = function(name, callback) {
 	});
 };
 
-////
-// Repository.remote
-// Subset of methods for handling remotes
-////
+/**
+ * Constructor for handling GIT remotes
+ * @constructor
+ * @type {Object}
+ */
 Repository.prototype.remote = {};
 
-////
-// Repository.remote.add(remote, url, callback)
-// Adds a new remote
-////
+/**
+ * Adds a new remote
+ * @param {String}   remote
+ * @param {String}   url
+ * @param {Function} callback
+ */
 Repository.prototype.remote.add = function(remote, url, callback) {
 	var options = remote + ' ' + url
 	  , gitRemoteAdd = new Command(this.path, 'remote add', [], options)
@@ -248,10 +266,12 @@ Repository.prototype.remote.add = function(remote, url, callback) {
 	});
 };
 
-////
-// Repository.remote.setUrl(remote, url, callback)
-// Changes url of an existing remote
-////
+/**
+ * Changes the URL of a existring remote
+ * @param {String}   remote
+ * @param {String}   url
+ * @param {Function} callback
+ */
 Repository.prototype.remote.setUrl = function(remote, url, callback) {
 	var options = remote + ' ' + url
 	  , gitRemoteSetUrl = new Command(this.path, 'remote set-url', [], options)
@@ -262,10 +282,11 @@ Repository.prototype.remote.setUrl = function(remote, url, callback) {
 	});
 };
 
-////
-// Repository.remote.remove(remote, callback)
-// Removes the specified remote
-////
+/**
+ * Removes the given remote
+ * @param  {String}   remote
+ * @param  {Function} callback
+ */
 Repository.prototype.remote.remove = function(remote, callback) {
 	var gitRemoteRemove = new Command(this.path, 'remote rm', [], remote)
 	  , repo = this;
@@ -275,10 +296,10 @@ Repository.prototype.remote.remove = function(remote, callback) {
 	});
 };
 
-////
-// Repository.remote.list(callback)
-// Passes key-value pairs to callback -> remote : url
-////
+/**
+ * Forwards an key-value list (remote : url) to the callback function
+ * @param  {Function} callback
+ */
 Repository.prototype.remote.list = function(callback) {
 	var gitRemoteList = new Command(this.path, 'remote', ['-v'], '')
 	  , repo = this;
@@ -292,29 +313,41 @@ Repository.prototype.remote.list = function(callback) {
 	});
 };
 
-////
-// Repository.push(remote, branch, callback, creds)
-// Pushes the specified branch to the specified remote
-////
+/**
+ * Performs a GIT push to the given remote for the given branch name
+ * @param  {String}   remote
+ * @param  {String}   branch
+ * @param  {Array}   flags
+ * @param  {Function} callback
+ * @param  {Object}   creds
+ */
 Repository.prototype.push = function(remote, branch, flags, callback, creds) {
 	sync(this.path, 'push', remote, branch, flags, callback, creds);
 };
 
-////
-// Repository.pull(remote, branch, callback, creds)
-// Pulls the specified branch from the specified remote
-////
+/**
+ * Performs a GIT pull from the given remote with the given branch name
+ * @param  {String}   remote
+ * @param  {String}   branch
+ * @param  {Array}   flags
+ * @param  {Function} callback
+ * @param  {Object}   creds
+ */
 Repository.prototype.pull = function(remote, branch, flags, callback, creds) {
 	sync(this.path, 'pull', remote, branch, flags, callback, creds);
 };
 
-////
-// sync(operation, remote, branch, callback, creds)
-// ----
-// Creates a fake terminal to push or pull from remote
-// This is because SSH does not read creds from stdin,
-// but instead, a pseudo-terminal.
-////
+/**
+ * Internal function to create a fake "terminal" to circumvent the SSH limitations regarding creds
+ * @uses pty 
+ * @param  {String}   path
+ * @param  {String}   operation
+ * @param  {String}   remote
+ * @param  {String}   branch
+ * @param  {Array}   flags
+ * @param  {Function} callback
+ * @param  {Object}   creds
+ */
 function sync(path, operation, remote, branch, flags, callback, creds) {
 	var operations = [operation, remote, branch].concat(flags || [])
 	  , pterm = pty.spawn('git', operations, { cwd : path })
@@ -339,10 +372,11 @@ function sync(path, operation, remote, branch, flags, callback, creds) {
 	});
 };
 
-////
-// Repository.reset(hash, callback)
-// Resets the repository's HEAD to the specified commit and passes commit log to callback
-////
+/**
+ * Resets the repository's HEAD to the specified commit and passes the commit log to the callback function
+ * @param  {String}   hash
+ * @param  {Function} callback
+ */
 Repository.prototype.reset = function(hash, callback) {
 	var gitReset = new Command(this.path, 'reset', ['-q'], hash)
 	  , repo = this
@@ -356,11 +390,10 @@ Repository.prototype.reset = function(hash, callback) {
 	});
 };
 
-////
-// Repository.graph(callback)
-// Passes a 2-dimensional array to the callback containing data that can be
-// consumed by a UI for generating a network graph
-////
+/**
+ * Passes a 2-dimensional array to the callback containing data that can be consumed by a UI for generating a network graph
+ * @param  {Function} callback
+ */
 Repository.prototype.graph = function(callback) {
   var gitGraph = new Command(this.path, 'log', ['--graph', '--pretty=oneline', '--abbrev-commit'], '')
     , repo = this
@@ -375,10 +408,10 @@ Repository.prototype.graph = function(callback) {
   });
 };
 
-////
-// Repository.describe(callback)
-// passes the current commit hash to the callback
-////
+/**
+ * Forwards the current commit hash to the callback function
+ * @param  {Function} callback
+ */
 Repository.prototype.describe = function(callback) {
   var gitDescribe = new Command(this.path, 'describe', ['--tags', '--always', '--long'], '')
     , repo = this
@@ -407,5 +440,8 @@ Repository.prototype.cherryPick = function(commit, callback, flags) {
 	});
 };
 
-// Export Constructor
+/**
+ * Export Constructor
+ * @type {Object}
+ */
 module.exports = Repository;
