@@ -42,7 +42,7 @@ Gitty.config = function(key, val, callback) {
 Gitty.clone = function(path, url) {
   var self  = this;
   var args  = Array.prototype.slice.apply(arguments);
-  var creds = args[2].username ? args[2] || {};
+  var creds = args[2].username ? args[2] : {};
   var done  = args.slice(-1).pop() || new Function();
   var pterm = pty.spawn('git', ['clone', url, path], { cwd : path });
   var error = null;
@@ -64,7 +64,7 @@ Gitty.clone = function(path, url) {
   });
 
   pterm.on('exit', function() {
-    callback(error);
+    done(error);
   });
 };
 

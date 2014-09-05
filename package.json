@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "mocha": "^1.21.4",
+    "rimraf": "^2.2.8",
     "should": "^4.0.4"
   },
   "scripts": {
