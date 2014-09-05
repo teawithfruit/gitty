@@ -52,17 +52,37 @@ Repository.prototype.init = function(callback, flags) {
  * @param  {Boolean}   useSync
  */
 Repository.prototype.log = function(callback, useSync) {
-	var format = '--pretty=format:\'{"commit": "%H","author": "%an <%ae>","date": "%ad","message": "%s"},\''
-	  , gitLog = new Command(this.path, 'log', [format], '')
-	  , repo = this;
-	gitLog.exec(function(error, stdout, stderr) {
-		var output = stdout
-		  , err = error || stderr;
-		if (output) {
-			output = parse['log'](output);
-		}
-		if (callback && typeof callback === 'function') callback.call(repo, err, output);
-	}, useSync);
+  var format = '--pretty=format:\'{"commit": "%H","author": "%an <%ae>","date": "%ad","message": "%s"},\''
+    , gitLog = new Command(this.path, 'log', [format], '')
+    , repo = this;
+  gitLog.exec(function(error, stdout, stderr) {
+    var output = stdout
+      , err = error || stderr;
+    if (output) {
+      output = parse['log'](output);
+    }
+    if (callback && typeof callback === 'function') callback.call(repo, err, output);
+  }, useSync);
+};
+
+/**
+ * Forwards the commit history for a specific branch to the callback function
+ * @param  {String} branch
+ * @param  {Function} callback
+ * @param  {Boolean}   useSync
+ */
+Repository.prototype.branchLog = function(branch, callback, useSync) {
+  var format = '--pretty=format:\'{"commit": "%H","author": "%an <%ae>","date": "%ad","message": "%s"},\''
+    , gitLog = new Command(this.path, 'log', [ branch , format ], '')
+    , repo = this;
+  gitLog.exec(function(error, stdout, stderr) {
+    var output = stdout
+      , err = error || stderr;
+    if (output) {
+      output = parse['log'](output);
+    }
+    if (callback && typeof callback === 'function') callback.call(repo, err, output);
+  }, useSync);
 };
 
 /**
