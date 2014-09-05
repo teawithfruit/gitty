@@ -52,10 +52,6 @@ myRepo.log(function(err, log) {
 });
 ```
 
-## Building the Documentation
-
-...
-
 ## Authenticated Repositories
 
 One challenge that was faced while developing Gitty was performing any
