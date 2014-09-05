@@ -1,12 +1,12 @@
 /*
  * Gitty - index.js
  * Author: Gordon Hall
- * 
+ *
  * Initializes module and exposes public methods
  */
 
-var Repository = require('./classes/repository.js')
-  , Command = require('./classes/command.js')
+var Repository = require('./lib/repository')
+  , Command = require('./lib/command')
   , pty = require('pty.js')
   , gitty;
 

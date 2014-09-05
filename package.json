@@ -1,14 +1,19 @@
 {
   "name": "gitty",
-  "version": "2.1.7",
+  "version": "3.0.0",
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
   "dependencies": {
-    "pty.js": "chjj/pty.js#18238d37e2915b3ac97e4ae0d5cb3e33f76ac758",
-    "execSync": "0.0.3"
+    "execSync": "^1.0.2",
+    "pty.js": "chjj/pty.js#18238d37e2915b3ac97e4ae0d5cb3e33f76ac758"
   },
-  "devDependencies": {},
-  "scripts": {},
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/* -R spec"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gordonwritescode/gitty.git"
@@ -18,6 +23,6 @@
     "git cli",
     "node git"
   ],
-  "author": "Gordon Hall <gordon@gordonwritescode.com> (http://gordonwritescode.com/)",
-  "license": "BSD"
+  "author": "Gordon Hall <gordon@gordonwritescode.com>",
+  "license": "LGPLv3"
 }
