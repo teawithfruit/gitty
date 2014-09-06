@@ -165,6 +165,36 @@ describe('Repository', function() {
 
   });
 
+  describe('.unstage()', function() {
+
+    it('should unstage a file from commit', function(done) {
+      fs.writeFile(repo1.path + '/file.txt', 'modified file', function(err) {
+        repo1.add(['file.txt'], function(err) {
+          repo1.unstage(['file.txt'], function(err) {
+            should.not.exist(err);
+            repo1.status(function(err, status) {
+              status.unstaged.should.have.lengthOf(1);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+  });
+
+  describe('.unstageSync()', function() {
+
+    it('should unstage a file from commit', function(done) {
+      fs.writeFileSync(repo2.path + '/file.txt', 'modified file');
+      repo2.addSync(['file.txt']);
+      repo2.unstageSync(['file.txt']);
+      repo2.statusSync().unstaged.should.have.lengthOf(1);
+      done();
+    });
+
+  });
+
   describe('.remove()', function() {
 
     it('should remove an added file', function(done) {
@@ -195,30 +225,52 @@ describe('Repository', function() {
 
   });
 
-  describe('.unstage()', function() {
+  describe('.createBranch()', function() {
 
-    it('should unstage a file from commit', function(done) {
-      repo1.add(['file1.txt'], function(err) {
-        console.log(repo1.statusSync())
-        repo1.unstage(['file1.txt'], function(err) {
-          should.not.exist(err);
-          repo1.status(function(err, status) {
-            console.log(status)
-            status.unstaged.should.have.lengthOf(1);
-            done();
-          });
+    it('should create a new branch', function(done) {
+      repo1.createBranch('test', function(err) {
+        should.not.exist(err);
+        repo1.getBranches(function(err, branches) {
+          branches.current.should.equal('master');
+          branches.others.should.have.lengthOf(1);
+          done();
         });
       });
     });
 
   });
 
-  describe('.unstageSync()', function() {
+  describe('.createBranchSync()', function() {
 
-    it('should unstage a file from commit', function(done) {
-      repo2.addSync(['file1.txt']);
-      repo2.unstageSync(['file1.txt']);
-      repo2.statusSync().unstaged.should.have.lengthOf(1);
+    it('should create a new branch', function(done) {
+      repo2.createBranchSync('test');
+      repo2.getBranchesSync().current.should.equal('master');
+      repo2.getBranchesSync().others.should.have.lengthOf(1);
+      done();
+    });
+
+  });
+
+  describe('.checkout()', function() {
+
+    it('should checkout a branch', function(done) {
+      repo1.checkout('test', function(err) {
+        should.not.exist(err);
+        repo1.getBranches(function(err, branches) {
+          should.not.exist(err);
+          branches.current.should.equal('test');
+          done();
+        });
+      });
+    });
+
+  });
+
+  describe('.checkoutSync()', function() {
+
+    it('should checkout a branch', function(done) {
+      repo2.checkoutSync('test');
+      repo2.getBranchesSync().current.should.equal('test');
       done();
     });
 
@@ -227,7 +279,13 @@ describe('Repository', function() {
   describe('.getBranches()', function() {
 
     it('should list all branches', function(done) {
-
+      repo1.getBranches(function(err, branches) {
+        should.not.exist(err);
+        branches.current.should.equal('test');
+        branches.others.should.have.lengthOf(1);
+        branches.others[0].should.equal('master');
+        done();
+      });
     });
 
   });
@@ -235,39 +293,10 @@ describe('Repository', function() {
   describe('.getBranchesSync()', function() {
 
     it('should list all branches', function(done) {
-
-    });
-
-  });
-
-  describe('.createBranch()', function() {
-
-    it('should create a new branch', function(done) {
-
-    });
-
-  });
-
-  describe('.createBranchSync()', function() {
-
-    it('should create a new branch', function(done) {
-
-    });
-
-  });
-
-  describe('.checkout()', function() {
-
-    it('should checkout a branch', function(done) {
-
-    });
-
-  });
-
-  describe('.checkoutSync()', function() {
-
-    it('should checkout a branch', function(done) {
-
+      repo2.getBranchesSync().current.should.equal('test');
+      repo2.getBranchesSync().others.should.have.lengthOf(1);
+      repo2.getBranchesSync().others[0].should.equal('master');
+      done();
     });
 
   });
@@ -275,7 +304,19 @@ describe('Repository', function() {
   describe('.merge()', function() {
 
     it('should merge a branch into the current branch', function(done) {
-
+      repo1.add(['file1.txt'], function(err) {
+        repo1.commit('add file', function(err) {
+          repo1.checkout('master', function(err) {
+            repo1.merge('test', function(err) {
+              should.not.exist(err);
+              repo1.log(function(err, log) {
+                log.should.have.lengthOf(2);
+                done();
+              })
+            });
+          });
+        });
+      });
     });
 
   });
@@ -283,6 +324,27 @@ describe('Repository', function() {
   describe('.mergeSync()', function() {
 
     it('should merge a branch into the current branch', function(done) {
+      repo2.addSync(['file1.txt']);
+      repo2.commitSync('add file');
+      repo2.checkoutSync('master');
+      repo2.mergeSync('test');
+      repo2.logSync().should.have.lengthOf(2);
+      done();
+    });
+
+  });
+
+  describe('.createTag()', function() {
+
+    it('should create a new tag', function(done) {
+
+    });
+
+  });
+
+  describe('.createTagSync()', function() {
+
+    it('should create a new tag', function(done) {
 
     });
 
@@ -304,22 +366,6 @@ describe('Repository', function() {
 
   });
 
-  describe('.createTag()', function() {
-
-    it('should create a new tag', function(done) {
-
-    });
-
-  });
-
-  describe('.createTagSync()', function() {
-
-    it('should create a new tag', function(done) {
-
-    });
-
-  });
-
   describe('.addRemote()', function() {
 
     it('should add a new remote', function(done) {
@@ -331,6 +377,22 @@ describe('Repository', function() {
   describe('.addRemoteSync()', function() {
 
     it('should add a new remote', function(done) {
+
+    });
+
+  });
+
+  describe('.getRemotes()', function() {
+
+    it('should list all remotes', function(done) {
+
+    });
+
+  });
+
+  describe('.getRemotesSync()', function() {
+
+    it('should list all remotes', function(done) {
 
     });
 
@@ -363,38 +425,6 @@ describe('Repository', function() {
   describe('.removeRemoteSync()', function() {
 
     it('should remove the remote', function(done) {
-
-    });
-
-  });
-
-  describe('.getRemotes()', function() {
-
-    it('should list all remotes', function(done) {
-
-    });
-
-  });
-
-  describe('.getRemotesSync()', function() {
-
-    it('should list all remotes', function(done) {
-
-    });
-
-  });
-
-  describe('.push()', function() {
-
-    it('should push to the remote', function(done) {
-
-    });
-
-  });
-
-  describe('.pull()', function() {
-
-    it('should pull from the remote', function(done) {
 
     });
 
@@ -443,6 +473,22 @@ describe('Repository', function() {
   describe('.cherryPickSync()', function() {
 
     it('should apply changes from another commit', function(done) {
+
+    });
+
+  });
+
+  describe('.push()', function() {
+
+    it('should push to the remote', function(done) {
+
+    });
+
+  });
+
+  describe('.pull()', function() {
+
+    it('should pull from the remote', function(done) {
 
     });
 
