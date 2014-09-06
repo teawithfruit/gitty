@@ -168,7 +168,17 @@ describe('Repository', function() {
   describe('.remove()', function() {
 
     it('should remove an added file', function(done) {
-
+      fs.writeFile(repo1.path + '/file1.txt', 'i am a file', function(err) {
+        repo1.add(['file1.txt'], function(err) {
+          repo1.remove(['file1.txt'], function(err) {
+            should.not.exist(err);
+            repo1.status(function(err, status) {
+              status.untracked.should.have.lengthOf(1);
+              done();
+            });
+          });
+        });
+      });
     });
 
   });
@@ -176,7 +186,11 @@ describe('Repository', function() {
   describe('.removeSync()', function() {
 
     it('should remove an added file', function(done) {
-
+      fs.writeFileSync(repo2.path + '/file1.txt', 'i am a file');
+      repo2.addSync(['file1.txt']);
+      repo2.removeSync(['file1.txt']);
+      repo2.statusSync().untracked.should.have.lengthOf(1);
+      done();
     });
 
   });
@@ -184,7 +198,17 @@ describe('Repository', function() {
   describe('.unstage()', function() {
 
     it('should unstage a file from commit', function(done) {
-
+      repo1.add(['file1.txt'], function(err) {
+        console.log(repo1.statusSync())
+        repo1.unstage(['file1.txt'], function(err) {
+          should.not.exist(err);
+          repo1.status(function(err, status) {
+            console.log(status)
+            status.unstaged.should.have.lengthOf(1);
+            done();
+          });
+        });
+      });
     });
 
   });
@@ -192,7 +216,10 @@ describe('Repository', function() {
   describe('.unstageSync()', function() {
 
     it('should unstage a file from commit', function(done) {
-
+      repo2.addSync(['file1.txt']);
+      repo2.unstageSync(['file1.txt']);
+      repo2.statusSync().unstaged.should.have.lengthOf(1);
+      done();
     });
 
   });
