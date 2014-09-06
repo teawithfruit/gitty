@@ -20,7 +20,7 @@ describe('Repository', function() {
   });
 
   after(function() {
-    rimraf.sync(HOME + '/.gitty/test1');
+    rimraf.sync(HOME + '/.gitty/test');
   });
 
   describe('@constructor', function() {

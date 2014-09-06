@@ -78,29 +78,346 @@ describe('Repository', function() {
 
   describe('.statusSync()', function() {
 
-
+    it('should show a new file in status', function(done) {
+      fs.writeFileSync(repo2.path + '/file.txt', 'i am a file');
+      (repo2.statusSync().untracked.indexOf('file.txt') === 0).should.be.true;
+      done();
+    });
 
   });
 
   describe('.add()', function() {
 
+    it('should stage a file for commit', function(done) {
+      repo1.add(['file.txt'], function(err) {
+        should.not.exist(err);
+        repo1.status(function(err, status) {
+          should.not.exists(err);
+          status.staged.should.have.lengthOf(1);
+          done();
+        });
+      });
+    });
+
   });
 
   describe('.addSync()', function() {
 
+    it('should stage a file for commit', function(done) {
+      repo2.addSync(['file.txt']);
+      repo2.statusSync().staged.should.have.lengthOf(1);
+      done();
+    });
 
+  });
+
+  describe('.commit()', function() {
+
+    it('should commit the working tree', function(done) {
+      repo1.commit('initial commit', function(err) {
+        should.not.exist(err);
+        repo1.status(function(err, status) {
+          should.not.exist(err);
+          status.staged.should.have.lengthOf(0);
+          status.unstaged.should.have.lengthOf(0);
+          status.untracked.should.have.lengthOf(0);
+          done();
+        });
+      });
+    });
+
+  });
+
+  describe('.commitSync()', function() {
+
+    it('should commit the working tree', function(done) {
+      repo2.commitSync('initial commit');
+      var status = repo2.statusSync();
+      status.staged.should.have.lengthOf(0);
+      status.unstaged.should.have.lengthOf(0);
+      status.untracked.should.have.lengthOf(0);
+      done();
+    });
 
   });
 
   describe('.log()', function() {
 
-
+    it('should get the commit log', function(done) {
+      repo1.log(function(err, log) {
+        should.not.exist(err);
+        log.should.have.lengthOf(1);
+        log[0].message.should.equal('initial commit');
+        done();
+      });
+    });
 
   });
 
   describe('.logSync()', function() {
 
+    it('should get the commit log', function(done) {
+      var log = repo2.logSync();
+      log.should.have.lengthOf(1);
+      log[0].message.should.equal('initial commit');
+      done();
+    });
 
+  });
+
+  describe('.remove()', function() {
+
+    it('should remove an added file', function(done) {
+
+    });
+
+  });
+
+  describe('.removeSync()', function() {
+
+    it('should remove an added file', function(done) {
+
+    });
+
+  });
+
+  describe('.unstage()', function() {
+
+    it('should unstage a file from commit', function(done) {
+
+    });
+
+  });
+
+  describe('.unstageSync()', function() {
+
+    it('should unstage a file from commit', function(done) {
+
+    });
+
+  });
+
+  describe('.getBranches()', function() {
+
+    it('should list all branches', function(done) {
+
+    });
+
+  });
+
+  describe('.getBranchesSync()', function() {
+
+    it('should list all branches', function(done) {
+
+    });
+
+  });
+
+  describe('.createBranch()', function() {
+
+    it('should create a new branch', function(done) {
+
+    });
+
+  });
+
+  describe('.createBranchSync()', function() {
+
+    it('should create a new branch', function(done) {
+
+    });
+
+  });
+
+  describe('.checkout()', function() {
+
+    it('should checkout a branch', function(done) {
+
+    });
+
+  });
+
+  describe('.checkoutSync()', function() {
+
+    it('should checkout a branch', function(done) {
+
+    });
+
+  });
+
+  describe('.merge()', function() {
+
+    it('should merge a branch into the current branch', function(done) {
+
+    });
+
+  });
+
+  describe('.mergeSync()', function() {
+
+    it('should merge a branch into the current branch', function(done) {
+
+    });
+
+  });
+
+  describe('.getTags()', function() {
+
+    it('should list all tags', function(done) {
+
+    });
+
+  });
+
+  describe('.getTagsSync()', function() {
+
+    it('should list all tags', function(done) {
+
+    });
+
+  });
+
+  describe('.createTag()', function() {
+
+    it('should create a new tag', function(done) {
+
+    });
+
+  });
+
+  describe('.createTagSync()', function() {
+
+    it('should create a new tag', function(done) {
+
+    });
+
+  });
+
+  describe('.addRemote()', function() {
+
+    it('should add a new remote', function(done) {
+
+    });
+
+  });
+
+  describe('.addRemoteSync()', function() {
+
+    it('should add a new remote', function(done) {
+
+    });
+
+  });
+
+  describe('.setRemoteUrl()', function() {
+
+    it('should change the remote url', function(done) {
+
+    });
+
+  });
+
+  describe('.setRemoteUrlSync()', function() {
+
+    it('should change the remote url', function(done) {
+
+    });
+
+  });
+
+  describe('.removeRemote()', function() {
+
+    it('should remove the remote', function(done) {
+
+    });
+
+  });
+
+  describe('.removeRemoteSync()', function() {
+
+    it('should remove the remote', function(done) {
+
+    });
+
+  });
+
+  describe('.getRemotes()', function() {
+
+    it('should list all remotes', function(done) {
+
+    });
+
+  });
+
+  describe('.getRemotesSync()', function() {
+
+    it('should list all remotes', function(done) {
+
+    });
+
+  });
+
+  describe('.push()', function() {
+
+    it('should push to the remote', function(done) {
+
+    });
+
+  });
+
+  describe('.pull()', function() {
+
+    it('should pull from the remote', function(done) {
+
+    });
+
+  });
+
+  describe('.reset()', function() {
+
+    it('should reset history to a past commit', function(done) {
+
+    });
+
+  });
+
+  describe('.resetSync()', function() {
+
+    it('should reset history to a past commit', function(done) {
+
+    });
+
+  });
+
+  describe('.describe()', function() {
+
+    it('should get the current commit hash', function(done) {
+
+    });
+
+  });
+
+  describe('.describeSync()', function() {
+
+    it('should get the current commit hash', function(done) {
+
+    });
+
+  });
+
+  describe('.cherryPick()', function() {
+
+    it('should apply changes from another commit', function(done) {
+
+    });
+
+  });
+
+  describe('.cherryPickSync()', function() {
+
+    it('should apply changes from another commit', function(done) {
+
+    });
 
   });
 
