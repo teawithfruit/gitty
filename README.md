@@ -1,8 +1,7 @@
 # Gitty
 
-Gitty is a Node.js wrapper for the Git CLI. It's syntax closely resembles the
-Git command line syntax to asynchronously execute common commands, and parses
-the output into operable objects - depending on the call.
+Gitty is a Node.js wrapper for Git. It's syntax resembles the Git command line
+syntax, executes common commands, and parses the output into operable objects.
 
 ## Prerequisites
 
