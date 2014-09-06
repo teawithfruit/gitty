@@ -1,5 +1,31 @@
 # Contributing
 
+Hi, friend. Getting ready to hack on Gitty? Read this first.
+
+## Conventions
+
+* 2 spaces for indentation
+* Lines stay under 80 cols
+* Align variable assignments
+* Line breaks in between blocks (conditionals, functions, and var lists)
+
+## Testing
+
+Pretty simple: if you write some code, you write a test. If the tests fail, you
+fix the code.
+
+Tests are named according to their corresponding file and the type of test. For
+instance the `repository.js` file is tested by `repository.unit.js` and
+`repository.integration.js`. If the result of the test makes changes to disk,
+uses the network, or has any other side effects, it's an integration test. If
+not, it's a unit test.
+
+If you need to write some files to disk for testing, do so under `$HOME/.gitty`
+like the other tests, and be sure to clean up after yourself when you're tests
+complete.
+
+## Diving In
+
 Almost all of the `Repository` methods are simply convenience wrappers around
 instances of `Command`. This makes extending the `Repository` constructor with
 custom methods easy as pie! Let's run through a quick example. Let's say we
@@ -15,8 +41,8 @@ constructor, and below is how you might do it. In `lib/repository.js`:
 
 ```js
 // we want to pass a branch name and callback into this method
-Repository.prototype.branchAndCheckout = function(name, callback) {
-  var self = this
+Repository.prototype.createBranchAndCheckout = function(name, callback) {
+  var self = this;
   var cmd  = new Command(self.path, 'checkout', ['-b'], name);
 
   cmd.exec(function(error, stdout, stderr) {
@@ -35,4 +61,18 @@ myRepo.branchAndCheckout('myBranch', function(err) {
   }
   // ...
 });
+```
+
+If the method you are adding doesn't utilize the network, please always include
+a synchronous version alongside (build scripts and dev tooling is a use case
+for Gitty).
+
+```js
+// we want to pass a branch name and callback into this method
+Repository.prototype.createBranchAndCheckoutSync = function(name, callback) {
+  var self = this
+  var cmd  = new Command(self.path, 'checkout', ['-b'], name);
+
+  return cmd.execSync();
+};
 ```

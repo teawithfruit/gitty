@@ -3,13 +3,13 @@
 Gitty is a Node.js wrapper for Git. It's syntax resembles the Git command line
 syntax, executes common commands, and parses the output into operable objects.
 
-## Prerequisites
+## Installation
+
+### Prerequisites
 
 * Node.js 0.8.x (http://nodejs.org)
 * Git 1.7.x.x (http://git-scm.com)
 * GNU/Linux or Mac OSX
-
-## Installation
 
 ```
 $ npm install gitty
@@ -27,17 +27,20 @@ for authenticated operations - which requires GCC compiler.
 6. Click on the "install" button after "Command Line Tools"
 7. Reboot
 
-## Usage
+### Testing
 
-```javascript
-var git = require('gitty');
+Run the the unit and integration tests with:
+
+```
+$ npm test
 ```
 
-The meat of the functionality is encapsulated in instances of a `Repository`
-object. This object is instantiated with the path to the repository you wish to
-perform actions on.
+The integration tests require a network connection.
 
-```javascript
+## Usage
+
+```js
+var git    = require('gitty');
 var myRepo = git('/path/to/repo');
 ```
 
@@ -51,16 +54,21 @@ myRepo.log(function(err, log) {
 });
 ```
 
+### Where are the Docs?
+
+For now, use the source, Luke. Pretty much everything you'll need is in
+`lib/repository.js` and it's very readable. Running the test suite will be of
+use as well since all public methods are tested and will print to the console.
+
 ## Authenticated Repositories
 
-One challenge that was faced while developing Gitty was performing any
-authenticated operations. Since OpenSSH does not read input from `stdin` for
-authentication, but rather a psuedo-terminal - Gitty uses *pty.js*
-(<https://github.com/chjj/pty.js/>) to spawn a pseudo-terminal for operations
-that may require authentication, such as `pull`, `push`, and `clone`.
+Since OpenSSH does not read input from `stdin` for authentication, but rather a
+psuedo-terminal - Gitty uses *pty.js* (<https://github.com/chjj/pty.js/>) to
+spawn a pseudo-terminal for operations that may require authentication, such as
+`pull`, `push`, and `clone`.
 
-Credentials are always passed as the last argument and are optional. Below is
-an example of an authenticated `Repository.push()`.
+Credentials are always passed as the last argument before the callback and are
+optional. Below is an example of an authenticated `Repository.push()`.
 
 ```javascript
 myRepo.push('origin', 'master', {
@@ -73,8 +81,8 @@ myRepo.push('origin', 'master', {
 ```
 
 This format is consistent for all authenticated operations. Keep this in mind
-if you are extending Gitty with an operation that requires authentication, be
-sure to read the pty.js documentation.
+if you are extending Gitty with an operation that requires authentication, and
+be sure to read the pty.js documentation.
 
 ## Author
 
