@@ -337,7 +337,13 @@ describe('Repository', function() {
   describe('.createTag()', function() {
 
     it('should create a new tag', function(done) {
-
+      repo1.createTag('test', function(err) {
+        should.not.exist(err);
+        repo1.getTags(function(err, tags) {
+          tags.should.have.lengthOf(1);
+          done();
+        });
+      });
     });
 
   });
@@ -345,7 +351,9 @@ describe('Repository', function() {
   describe('.createTagSync()', function() {
 
     it('should create a new tag', function(done) {
-
+      repo2.createTagSync('test');
+      repo2.getTagsSync().should.have.lengthOf(1);
+      done();
     });
 
   });
@@ -353,7 +361,11 @@ describe('Repository', function() {
   describe('.getTags()', function() {
 
     it('should list all tags', function(done) {
-
+      repo1.getTags(function(err, tags) {
+        should.not.exist(err);
+        tags.should.have.lengthOf(1);
+        done();
+      });
     });
 
   });
@@ -361,7 +373,8 @@ describe('Repository', function() {
   describe('.getTagsSync()', function() {
 
     it('should list all tags', function(done) {
-
+      repo2.getTagsSync().should.have.lengthOf(1);
+      done();
     });
 
   });
@@ -369,7 +382,13 @@ describe('Repository', function() {
   describe('.addRemote()', function() {
 
     it('should add a new remote', function(done) {
-
+      repo1.addRemote('someremote', 'https://someremote', function(err) {
+        should.not.exist(err);
+        repo1.getRemotes(function(err, remotes) {
+          should.exist(remotes.someremote);
+          done();
+        });
+      });
     });
 
   });
@@ -377,7 +396,9 @@ describe('Repository', function() {
   describe('.addRemoteSync()', function() {
 
     it('should add a new remote', function(done) {
-
+      repo2.addRemoteSync('someremote', 'https://someremote');
+      should.exist(repo2.getRemotesSync().someremote);
+      done();
     });
 
   });
@@ -385,7 +406,11 @@ describe('Repository', function() {
   describe('.getRemotes()', function() {
 
     it('should list all remotes', function(done) {
-
+      repo1.getRemotes(function(err, remotes) {
+        should.not.exist(err);
+        Object.keys(remotes).should.have.lengthOf(1);
+        done();
+      });
     });
 
   });
@@ -393,7 +418,8 @@ describe('Repository', function() {
   describe('.getRemotesSync()', function() {
 
     it('should list all remotes', function(done) {
-
+      Object.keys(repo2.getRemotesSync()).should.have.lengthOf(1);
+      done();
     });
 
   });
@@ -401,7 +427,12 @@ describe('Repository', function() {
   describe('.setRemoteUrl()', function() {
 
     it('should change the remote url', function(done) {
-
+      repo1.setRemoteUrl('someremote', 'https://anotherremote', function(err) {
+        repo1.getRemotes(function(err, remotes) {
+          remotes.someremote.should.equal('https://anotherremote');
+          done();
+        });
+      });
     });
 
   });
@@ -409,7 +440,9 @@ describe('Repository', function() {
   describe('.setRemoteUrlSync()', function() {
 
     it('should change the remote url', function(done) {
-
+      repo2.setRemoteUrlSync('someremote', 'https://anotherremote');
+      repo2.getRemotesSync().someremote.should.equal('https://anotherremote');
+      done();
     });
 
   });
@@ -417,7 +450,13 @@ describe('Repository', function() {
   describe('.removeRemote()', function() {
 
     it('should remove the remote', function(done) {
-
+      repo1.removeRemote('someremote', function(err) {
+        should.not.exist(err);
+        repo1.getRemotes(function(err, remotes) {
+          should.not.exist(remotes.someremote);
+          done();
+        });
+      });
     });
 
   });
@@ -425,7 +464,9 @@ describe('Repository', function() {
   describe('.removeRemoteSync()', function() {
 
     it('should remove the remote', function(done) {
-
+      repo2.removeRemoteSync('someremote');
+      should.not.exist(repo2.getRemotesSync().someremote);
+      done();
     });
 
   });
@@ -433,7 +474,15 @@ describe('Repository', function() {
   describe('.reset()', function() {
 
     it('should reset history to a past commit', function(done) {
-
+      repo1.log(function(err, log) {
+        repo1.reset(log[1].commit, function(err) {
+          should.not.exist(err);
+          repo1.log(function(err, log) {
+            log.should.have.lengthOf(1);
+            done();
+          });
+        });
+      });
     });
 
   });
@@ -441,7 +490,9 @@ describe('Repository', function() {
   describe('.resetSync()', function() {
 
     it('should reset history to a past commit', function(done) {
-
+      repo2.resetSync(repo2.logSync()[1].commit);
+      repo2.logSync().should.have.lengthOf(1);
+      done();
     });
 
   });
@@ -449,7 +500,13 @@ describe('Repository', function() {
   describe('.describe()', function() {
 
     it('should get the current commit hash', function(done) {
-
+      repo1.describe(function(err, hash) {
+        should.not.exist(err);
+        repo1.log(function(err, log) {
+          log[0].commit.substr(0, 7).should.equal(hash.substr(0, 7));
+          done();
+        })
+      });
     });
 
   });
@@ -457,7 +514,10 @@ describe('Repository', function() {
   describe('.describeSync()', function() {
 
     it('should get the current commit hash', function(done) {
-
+      repo2.logSync()[0].commit.substr(0, 7).should.equal(
+        repo2.describeSync().substr(0, 7)
+      );
+      done();
     });
 
   });
@@ -465,7 +525,25 @@ describe('Repository', function() {
   describe('.cherryPick()', function() {
 
     it('should apply changes from another commit', function(done) {
-
+      repo1.checkout('test', function(err) {
+        fs.writeFile('cherry.txt', 'cherrypickme', function(err) {
+          repo1.add(['cherry.txt'], function(err) {
+            repo1.commit('cherrypickme', function(err) {
+              repo1.log(function(err, log) {
+                repo1.checkout('master', function(err) {
+                  repo1.cherryPick(log[0].commit, function(err) {
+                    should.not.exist(err);
+                    repo1.log(function(err, log) {
+                      log.should.have.lengthOf(2);
+                      done();
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
     });
 
   });
@@ -473,14 +551,22 @@ describe('Repository', function() {
   describe('.cherryPickSync()', function() {
 
     it('should apply changes from another commit', function(done) {
-
+      repo2.checkoutSync('test');
+      fs.writeFileSync('cherry.txt', 'cherrypickme');
+      repo2.addSync(['cherry.txt']);
+      repo2.commitSync('cherrypickme');
+      var log = repo2.logSync();
+      repo2.checkoutSync('master');
+      repo2.cherryPickSync(log[0].commit);
+      repo2.logSync().should.have.lengthOf(2);
+      done();
     });
 
   });
 
   describe('.push()', function() {
 
-    it('should push to the remote', function(done) {
+    it.skip('should push to the remote', function(done) {
 
     });
 
@@ -488,7 +574,7 @@ describe('Repository', function() {
 
   describe('.pull()', function() {
 
-    it('should pull from the remote', function(done) {
+    it.skip('should pull from the remote', function(done) {
 
     });
 
