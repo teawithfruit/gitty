@@ -1,6 +1,6 @@
 {
   "name": "gitty",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
   "dependencies": {
@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "mocha": "^1.21.4",
+    "pushover": "^1.3.6",
     "rimraf": "^2.2.8",
     "should": "^4.0.4"
   },

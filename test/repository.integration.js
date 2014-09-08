@@ -3,6 +3,7 @@ var should     = require('should');
 var rimraf     = require('rimraf');
 var HOME       = process.env.HOME;
 var Repository = require('../lib/repository');
+var pushover   = require('pushover');
 
 describe('Repository', function() {
 
@@ -21,7 +22,17 @@ describe('Repository', function() {
     repo1 = new Repository(HOME + '/.gitty/test1');
     repo2 = new Repository(HOME + '/.gitty/test2');
 
-    repo2.on('ready', ready);
+    var repos = pushover(HOME + '/.gitty');
+
+    repos.on('push', function(push) {
+      push.accept();
+    });
+
+    require('http').createServer(function(req, res) {
+      repos.handle(req, res);
+    }).listen(7001, function() {
+      ready();
+    });
   });
 
   after(function() {
@@ -566,16 +577,27 @@ describe('Repository', function() {
 
   describe('.push()', function() {
 
-    it.skip('should push to the remote', function(done) {
-
+    it('should push to the remote', function(done) {
+      repo1.addRemoteSync('local', 'http://localhost:7001/target1');
+      repo1.push('local', 'master', function(err, result) {
+        should.not.exist(err);
+        fs.existsSync(HOME + '/.gitty/target1.git').should.equal(true);
+        done();
+      });
     });
 
   });
 
   describe('.pull()', function() {
 
-    it.skip('should pull from the remote', function(done) {
-
+    it('should pull from the remote', function(done) {
+      repo1.resetSync(repo1.logSync()[1].commit);
+      repo1.logSync().should.have.lengthOf(1);
+      repo1.pull('local', 'master', function(err, result) {
+        should.not.exist(err);
+        repo1.logSync().should.have.lengthOf(2);
+        done();
+      });
     });
 
   });
