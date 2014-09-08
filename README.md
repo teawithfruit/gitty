@@ -1,5 +1,7 @@
 # Gitty
 
+[![Build Status](https://travis-ci.org/gordonwritescode/gitty.svg)](https://travis-ci.org/gordonwritescode/gitty)
+
 Gitty is a Node.js wrapper for Git. It's syntax resembles the Git command line
 syntax, executes common commands, and parses the output into operable objects.
 
