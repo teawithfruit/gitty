@@ -18,18 +18,55 @@ var Gitty = function(path) {
 };
 
 /**
- * Handles the global GIT configuration
- * @param  {String}   key
- * @param  {String}   val
- * @param  {Function} callback
- */
-Gitty.config = function(key, val, callback) {
-  var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
-  var done = callback || new Function();
+* Handles the global GIT configuration
+* @param  {String}   key
+* @param  {String}   val
+* @param  {Function} callback
+*/
+Gitty.setConfig = function(key, val, callback) {
+	var cmd   = new Command('/', 'config', ['--global', key], '"' + val + '"');
+	var done  = callback || new Function();
 
-  cmd.exec(function(error, stdout, stderr) {
-    done(error || stderr || null);
-  });
+	cmd.exec(function(err, stdout, stderr) {
+		done(err || null);
+	});
+};
+
+/**
+* Handles the global GIT configuration
+* @param  {String}   key
+* @param  {String}   val
+* @param  {Function} callback
+*/
+Gitty.setConfigSync = function(key, val) {
+	var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
+
+	return cmd.execSync();
+};
+
+/**
+* Handles the global GIT configuration
+* @param  {String}   key
+* @param  {Function} callback
+*/
+Gitty.getConfig = function(key, callback) {
+	var cmd  = new Command('/', 'config', ['--global', key]);
+	var done = callback || new Function();
+
+	cmd.exec(function(err, stdout, stderr) {
+		done(err || null, stdout);
+	});
+};
+
+/**
+* Handles the global GIT configuration
+* @param  {String}   key
+* @param  {Function} callback
+*/
+Gitty.getConfigSync = function(key) {
+	var cmd = new Command('/', 'config', ['--global', key]);
+
+	return cmd.execSync();
 };
 
 /**
