@@ -37,8 +37,6 @@ Run the the unit and integration tests with:
 $ npm test
 ```
 
-The integration tests require a network connection.
-
 ## Usage
 
 ```js
