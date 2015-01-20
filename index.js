@@ -6,6 +6,7 @@
  */
 
 var Repository = require('./lib/repository');
+var Command = require('./lib/command');
 var pty        = require('pty.js');
 
 /**
@@ -111,3 +112,17 @@ Gitty.clone = function(path, url) {
  * @type {Object}
  */
 module.exports = Gitty;
+
+/**
+ * Export Repository Contructor
+ * @constructor
+ * @type {Object}
+ */
+module.exports.Repository = Repository;
+
+/**
+ * Export Command Contructor
+ * @constructor
+ * @type {Object}
+ */
+module.exports.Command = Command;
