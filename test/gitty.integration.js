@@ -34,6 +34,55 @@ describe('Gitty', function() {
     });
   });
 
+  describe('.getConfig()', function() {
+
+    it('should return a value from the global git config', function(done) {
+      Gitty.getConfig('user.name', function(err, username) {
+        should.not.exist(err);
+        should.exist(username);
+        done();
+      });
+    });
+
+  });
+
+  describe('.getConfigSync()', function() {
+
+    it('should return a value from the global git config', function(done) {
+      should.exist(Gitty.getConfigSync('user.name'));
+      done();
+    });
+
+  });
+
+  describe('.setConfig()', function() {
+
+    it('should set a value to the global git config', function(done) {
+      var value = Date.now();
+      Gitty.setConfig('gitty.integ.test', value, function(err) {
+        should.not.exist(err);
+        Gitty.getConfigSync('gitty.integ.test').trim().should.equal(
+          value.toString()
+        );
+        done();
+      });
+    });
+
+  });
+
+  describe('.setConfigSync()', function() {
+
+    it('should return a value from the global git config', function(done) {
+      var value = Date.now();
+      Gitty.setConfigSync('gitty.integ.test', value);
+      Gitty.getConfigSync('gitty.integ.test').trim().should.equal(
+        value.toString()
+      );
+      done();
+    });
+
+  });
+
   describe('.clone()', function() {
 
     it('should clone the repository', function(done) {
