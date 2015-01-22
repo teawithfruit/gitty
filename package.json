@@ -1,6 +1,6 @@
 {
   "name": "gitty",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "A Node.js wrapper for the Git CLI",
   "main": "index",
   "dependencies": {
@@ -25,6 +25,44 @@
     "git cli",
     "node git"
   ],
-  "author": "Gordon Hall <gordon@gordonwritescode.com>",
+  "author": {
+    "name": "Gordon Hall",
+    "email": "gordon@gordonwritescode.com",
+    "url": "https://gordonwritescode.com"
+  },
+  "contributors": [
+    {
+      "name": "Christopher Meyering",
+      "url": "https://github.com/MeySolution"
+    },
+    {
+      "name": "Eric Martindale",
+      "url": "http://www.ericmartindale.com"
+    },
+    {
+      "name": "tomruggs",
+      "url": "https://github.com/tomruggs"
+    },
+    {
+      "name": "Justin Cooper",
+      "url": "https://github.com/jwcooper"
+    },
+    {
+      "name": "Milan Iliev",
+      "url": "http://milaniliev.com"
+    },
+    {
+      "name": "Ota Mares",
+      "url": "http://www.rebuy.de"
+    },
+    {
+      "name": "Sam Saccone",
+      "url": "sam@samx.it"
+    },
+    {
+      "name": "Nicolas Chambrier",
+      "url": "http://naholyr.fr"
+    }
+  ],
   "license": "LGPLv3"
 }
