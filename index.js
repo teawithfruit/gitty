@@ -15,7 +15,7 @@ var pty        = require('pty.js');
  * @param  {String} path
  */
 var Gitty = function(path) {
-	return new Repository(path);
+  return new Repository(path);
 };
 
 /**
@@ -25,12 +25,12 @@ var Gitty = function(path) {
 * @param  {Function} callback
 */
 Gitty.setConfig = function(key, val, callback) {
-	var cmd   = new Command('/', 'config', ['--global', key], '"' + val + '"');
-	var done  = callback || new Function();
+  var cmd   = new Command('/', 'config', ['--global', key], '"' + val + '"');
+  var done  = callback || new Function();
 
-	cmd.exec(function(err, stdout, stderr) {
-		done(err || null);
-	});
+  cmd.exec(function(err, stdout, stderr) {
+    done(err || null);
+  });
 };
 
 /**
@@ -40,9 +40,9 @@ Gitty.setConfig = function(key, val, callback) {
 * @param  {Function} callback
 */
 Gitty.setConfigSync = function(key, val) {
-	var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
+  var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
 
-	return cmd.execSync();
+  return cmd.execSync();
 };
 
 /**
@@ -51,12 +51,12 @@ Gitty.setConfigSync = function(key, val) {
 * @param  {Function} callback
 */
 Gitty.getConfig = function(key, callback) {
-	var cmd  = new Command('/', 'config', ['--global', key]);
-	var done = callback || new Function();
+  var cmd  = new Command('/', 'config', ['--global', key]);
+  var done = callback || new Function();
 
-	cmd.exec(function(err, stdout, stderr) {
-		done(err || null, stdout);
-	});
+  cmd.exec(function(err, stdout, stderr) {
+    done(err || null, stdout);
+  });
 };
 
 /**
@@ -65,9 +65,9 @@ Gitty.getConfig = function(key, callback) {
 * @param  {Function} callback
 */
 Gitty.getConfigSync = function(key) {
-	var cmd = new Command('/', 'config', ['--global', key]);
+  var cmd = new Command('/', 'config', ['--global', key]);
 
-	return cmd.execSync();
+  return cmd.execSync();
 };
 
 /**
@@ -112,3 +112,17 @@ Gitty.clone = function(path, url) {
  * @type {Object}
  */
 module.exports = Gitty;
+
+/**
+ * Export Repository Contructor
+ * @constructor
+ * @type {Object}
+ */
+module.exports.Repository = Repository;
+
+/**
+ * Export Command Contructor
+ * @constructor
+ * @type {Object}
+ */
+module.exports.Command = Command;
