@@ -6,6 +6,7 @@
  */
 
 var Repository = require('./lib/repository');
+var Command    = require('./lib/command');
 var pty        = require('pty.js');
 
 /**
