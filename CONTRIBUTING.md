@@ -9,6 +9,11 @@ Hi, friend. Getting ready to hack on Gitty? Read this first.
 * Align variable assignments
 * Line breaks in between blocks (conditionals, functions, and var lists)
 
+## Credits
+
+Before sending your PR, go ahead and add yourself to the `contributors` array
+in the `package.json` file. You earned it big guy. :thumbsup:
+
 ## Testing
 
 Pretty simple: if you write some code, you write a test. If the tests fail, you
