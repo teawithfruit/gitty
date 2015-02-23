@@ -602,4 +602,51 @@ describe('Repository', function() {
 
   });
 
+  describe('.show()', function() {
+
+    it('should return a specific revision of a file from a commit ID', function(done) {
+      fs.writeFile(repo1.path + '/show.txt', 'showTest rev 1', function(err) {
+        repo1.add([repo1.path + '/show.txt'], function(err) {
+          repo1.commit('showTest', function(err) {
+            fs.writeFile(repo1.path + '/show.txt', 'showTest rev 2', function(err) {
+              repo1.add([repo1.path + '/show.txt'], function(err) {
+                repo1.commit('showTest change', function(err) {
+                  repo1.log(function(err, log) {
+                    repo1.show(log[1].commit, './show.txt', function(err, data) {
+                      data.should.equal('showTest rev 1');
+                      done();
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+  });
+
+  describe('.showSync()', function() {
+
+    it('should return a specific revision of a file from a commit ID', function(done) {
+      repo2.checkoutSync('test');
+
+      fs.writeFileSync('show.txt', 'showTest rev 1');
+      repo2.addSync(['show.txt']);
+      repo2.commitSync('showTest');
+
+      fs.writeFileSync('show.txt', 'showTest rev 2');
+      repo2.addSync(['show.txt']);
+      repo2.commitSync('showTest change');
+
+      var log = repo2.logSync();
+      var testText = repo2.showSync(log[1].commit, './show.txt');
+
+      testText.should.equal('showTest rev 1');
+      done();
+    });
+
+  });
+
 });
