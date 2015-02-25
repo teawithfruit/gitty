@@ -1,32 +1,28 @@
-/*
- * Gitty - index.js
- * Author: Gordon Hall
- *
- * Initializes module and exposes public methods
- */
+/**
+* @module gitty
+*/
 
 var Repository = require('./lib/repository');
-var Command    = require('./lib/command');
-var pty        = require('pty.js');
+var Command = require('./lib/command');
 
 /**
- * Setup function for getting access to a GIT repo
- * @constructor
- * @param  {String} path
- */
+* Setup function for getting access to a GIT repo
+* @constructor
+* @param {string} path
+*/
 var Gitty = function(path) {
   return new Repository(path);
 };
 
 /**
 * Handles the global GIT configuration
-* @param  {String}   key
-* @param  {String}   val
-* @param  {Function} callback
+* @param {string} key
+* @param {string} val
+* @param {function} callback
 */
 Gitty.setConfig = function(key, val, callback) {
-  var cmd   = new Command('/', 'config', ['--global', key], '"' + val + '"');
-  var done  = callback || new Function();
+  var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
+  var done = callback || new Function();
 
   cmd.exec(function(err, stdout, stderr) {
     done(err || null);
@@ -35,9 +31,9 @@ Gitty.setConfig = function(key, val, callback) {
 
 /**
 * Handles the global GIT configuration
-* @param  {String}   key
-* @param  {String}   val
-* @param  {Function} callback
+* @param {string} key
+* @param {string} val
+* @param {function} callback
 */
 Gitty.setConfigSync = function(key, val) {
   var cmd = new Command('/', 'config', ['--global', key], '"' + val + '"');
@@ -47,11 +43,11 @@ Gitty.setConfigSync = function(key, val) {
 
 /**
 * Handles the global GIT configuration
-* @param  {String}   key
-* @param  {Function} callback
+* @param {string} key
+* @param {function} callback
 */
 Gitty.getConfig = function(key, callback) {
-  var cmd  = new Command('/', 'config', ['--global', key]);
+  var cmd = new Command('/', 'config', ['--global', key]);
   var done = callback || new Function();
 
   cmd.exec(function(err, stdout, stderr) {
@@ -61,8 +57,8 @@ Gitty.getConfig = function(key, callback) {
 
 /**
 * Handles the global GIT configuration
-* @param  {String}   key
-* @param  {Function} callback
+* @param {string} key
+* @param {function} callback
 */
 Gitty.getConfigSync = function(key) {
   var cmd = new Command('/', 'config', ['--global', key]);
@@ -71,58 +67,42 @@ Gitty.getConfigSync = function(key) {
 };
 
 /**
- * Wrapper for the GIT clone function
- * @param  {String}   path
- * @param  {String}   url
- * @param  {Object}   creds
- * @param  {Function} callback
- */
+* Wrapper for the GIT clone function
+* @param {string} path
+* @param {string} url
+* @param {object} creds
+* @param {function} callback
+*/
 Gitty.clone = function(path, url) {
-  var self  = this;
-  var args  = Array.prototype.slice.apply(arguments);
+  var self = this;
+  var args = Array.prototype.slice.apply(arguments);
   var creds = args[2].username ? args[2] : {};
-  var done  = args.slice(-1).pop() || new Function();
-  var pterm = pty.spawn('git', ['clone', url, path], { cwd : path });
+  var done = args.slice(-1).pop() || new Function();
+  var clone = new Command('/', 'clone', [url, path]);
   var error = null;
 
-  pterm.on('data', function(data) {
-    var prompt = data.toLowerCase();
-
-    if (prompt.indexOf('username') > -1) {
-      return pterm.write(creds.username + '\r');
-    }
-
-    if (prompt.indexOf('password') > -1) {
-      return pterm.write(creds.password + '\r');
-    }
-
-    if ((prompt.indexOf('error') > -1) || (prompt.indexOf('fatal') > -1)) {
-      return error = prompt;
-    }
-  });
-
-  pterm.on('exit', function() {
-    done(error);
+  clone.exec(function(err, stdout, stderr) {
+    done(err);
   });
 };
 
 /**
- * Export Contructor
- * @constructor
- * @type {Object}
- */
+* Export Contructor
+* @constructor
+* @type {object}
+*/
 module.exports = Gitty;
 
 /**
- * Export Repository Contructor
- * @constructor
- * @type {Object}
- */
+* Export Repository Contructor
+* @constructor
+* @type {object}
+*/
 module.exports.Repository = Repository;
 
 /**
- * Export Command Contructor
- * @constructor
- * @type {Object}
- */
+* Export Command Contructor
+* @constructor
+* @type {object}
+*/
 module.exports.Command = Command;
