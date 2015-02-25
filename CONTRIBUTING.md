@@ -6,7 +6,7 @@ Hi, friend. Getting ready to hack on Gitty? Read this first.
 
 * 2 spaces for indentation
 * Lines stay under 80 cols
-* Align variable assignments
+* Use JSDoc annotations
 * Line breaks in between blocks (conditionals, functions, and var lists)
 
 ## Credits
