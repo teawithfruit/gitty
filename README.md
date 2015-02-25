@@ -11,7 +11,6 @@ syntax, executes common commands, and parses the output into operable objects.
 
 * Node.js 0.12.x (http://nodejs.org)
 * Git 1.7.x.x (http://git-scm.com)
-* GNU/Linux or Mac OSX
 
 ```
 $ npm install gitty
