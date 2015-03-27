@@ -323,7 +323,7 @@ describe('Repository', function() {
               repo1.log(function(err, log) {
                 log.should.have.lengthOf(2);
                 done();
-              })
+              });
             });
           });
         });
@@ -516,7 +516,7 @@ describe('Repository', function() {
         repo1.log(function(err, log) {
           log[0].commit.substr(0, 7).should.equal(hash.substr(0, 7));
           done();
-        })
+        });
       });
     });
 
