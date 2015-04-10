@@ -67,6 +67,33 @@ Gitty.getConfigSync = function(key) {
 };
 
 /**
+* Handles the local GIT configuration
+* @param {string} key
+* @param {string} val
+* @param {function} callback
+*/
+Gitty.setConfigLocal = function(path, key, val, callback) {
+  var cmd = new Command(path, 'config', ['--local', key], '"' + val + '"');
+  var done = callback || new Function();
+
+  cmd.exec(function(err, stdout, stderr) {
+    done(err || null);
+  });
+};
+
+/**
+* Handles the local GIT configuration
+* @param {string} key
+* @param {string} val
+* @param {function} callback
+*/
+Gitty.setConfigLocalSync = function(path, key, val) {
+  var cmd = new Command(path, 'config', ['--local', key], '"' + val + '"');
+
+  return cmd.execSync();
+};
+
+/**
 * Wrapper for the GIT clone function
 * @param {string} path
 * @param {string} url
